@@ -7,7 +7,7 @@ azure-identity>=1.16.0
 # Azure Monitor / Log Analytics (Scenario 1)
 azure-monitor-query>=1.3.0
 
-# Azure DevOps SDK (Scenarios 1 & 5)
+# Azure DevOps SDK (Scenarios 1, 3 & 5)
 azure-devops>=7.1.0b4
 
 # Microsoft Graph SDK (Scenario 1)
@@ -15,6 +15,10 @@ msgraph-sdk>=1.5.0
 
 # Cosmos DB SDK (Scenario 5)
 azure-cosmos>=4.7.0
+
+# Semantic Kernel — Multi-Agent Orchestration (Scenario 3)
+# Required only for: python agents/incident_remediation.py --real
+semantic-kernel[agents]>=1.0.0
 
 # Utilities
 python-dotenv>=1.0.0

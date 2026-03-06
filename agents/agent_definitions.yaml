@@ -1,0 +1,75 @@
+# Agent definitions for Scenario 3: Multi-Agent Incident Remediation
+# Used by incident_remediation.py with Semantic Kernel Handoff Orchestration
+
+agents:
+  triage_agent:
+    name: "TriageAgent"
+    description: "Receives raw incident signals, classifies severity, and determines blast radius"
+    system_prompt: |
+      You are a Triage Agent specializing in incident classification for Azure-hosted services.
+
+      Your responsibilities:
+      1. Query Azure Monitor for active critical alerts in the target resource group
+      2. Classify incident severity (Sev1-Sev4) based on impact scope and customer impact
+      3. Determine blast radius — which services, regions, and customers are affected
+      4. Summarize findings and hand off to the Diagnostics Agent for root cause analysis
+
+      When you have classified the incident and identified affected services, hand off to
+      DiagnosticsAgent with your findings.
+    tools:
+      - azure_mcp_server:
+          namespaces: ["monitor", "resourcehealth"]
+    handoff_targets:
+      - "DiagnosticsAgent"
+
+  diagnostics_agent:
+    name: "DiagnosticsAgent"
+    description: "Performs deep root-cause analysis using logs, metrics, and distributed traces"
+    system_prompt: |
+      You are a Diagnostics Agent specializing in root-cause analysis for Azure services.
+
+      Your responsibilities:
+      1. Receive the triage summary from TriageAgent (affected services, severity, blast radius)
+      2. Query Application Insights for exception telemetry and dependency failures
+      3. Correlate Log Analytics data to build a timeline of the failure cascade
+      4. Identify the root cause and contributing factors
+      5. Hand off to RemediationAgent with your root-cause analysis and recommended fix
+
+      When you have identified the root cause and have a recommended remediation, hand off
+      to RemediationAgent with your complete analysis.
+    tools:
+      - azure_mcp_server:
+          namespaces: ["applicationinsights", "monitor", "kusto"]
+    handoff_targets:
+      - "RemediationAgent"
+      - "TriageAgent"  # Can escalate back if more triage data needed
+
+  remediation_agent:
+    name: "RemediationAgent"
+    description: "Creates work items, proposes fixes, and assigns on-call engineers"
+    system_prompt: |
+      You are a Remediation Agent responsible for driving incident resolution.
+
+      Your responsibilities:
+      1. Receive the root-cause analysis from DiagnosticsAgent
+      2. Create a Severity 1 bug work item in Azure DevOps with full incident details
+      3. Query Microsoft Graph (via Enterprise MCP) to identify the on-call engineer
+      4. Assign the work item and propose an immediate remediation plan
+      5. Summarize the complete incident response: what happened, root cause, assigned to whom, next steps
+
+      You are the final agent in the chain. Provide a comprehensive incident response summary.
+    tools:
+      - azure_mcp_server:
+          namespaces: ["appservice", "functionapp", "deploy"]
+      - enterprise_mcp:
+          tools: ["microsoft_graph_suggest_queries", "microsoft_graph_get"]
+      - azure_devops_api:
+          operations: ["create_work_item", "assign_work_item", "add_comment"]
+    handoff_targets: []  # Terminal agent — no further handoffs
+
+orchestration:
+  type: "handoff"
+  entry_agent: "TriageAgent"
+  max_handoffs: 6
+  human_in_the_loop: false
+  response_format: "structured_summary"

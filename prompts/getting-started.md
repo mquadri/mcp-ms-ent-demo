@@ -1,8 +1,10 @@
 # Getting Started Prompts - Microsoft Enterprise MCP Servers
 
-These natural language prompts demonstrate Microsoft Enterprise MCP integrations
-across Azure Monitor, Azure DevOps, Microsoft Graph, and Cosmos DB. Each prompt
-includes the MCP servers it exercises and any data prerequisites.
+These natural language prompts demonstrate official Microsoft MCP integrations
+using the **Azure MCP Server** (`@azure/mcp`) and the **Microsoft MCP Server
+for Enterprise**. Scenario 3 also demonstrates the **Semantic Kernel Agent
+Framework** (Handoff Orchestration). Each prompt includes the MCP servers it
+exercises and any data prerequisites.
 
 ---
 
@@ -10,7 +12,7 @@ includes the MCP servers it exercises and any data prerequisites.
 
 ### Prompt 1 — Triage Critical Alerts
 
-**MCP Servers**: Azure Monitor  
+**MCP Servers**: Azure MCP Server (monitor namespace)  
 **Prerequisites**: Run `python demos/setup_scenario_1.py` to seed alerts
 
 > "Our monitoring is alerting on the CheckoutService. Fetch all active critical
@@ -22,7 +24,7 @@ includes the MCP servers it exercises and any data prerequisites.
 
 ### Prompt 2 — Correlate Logs and Create Incident
 
-**MCP Servers**: Azure Monitor, Azure DevOps  
+**MCP Servers**: Azure MCP Server (monitor, appinsights namespaces)  
 **Prerequisites**: Run `python demos/setup_scenario_1.py`
 
 > "Pull the last 10 ERROR-level application logs from the CheckoutService in
@@ -35,32 +37,59 @@ includes the MCP servers it exercises and any data prerequisites.
 
 ### Prompt 3 — Identify On-Call and Assign
 
-**MCP Servers**: Microsoft Graph, Azure DevOps  
+**MCP Servers**: Enterprise MCP (Microsoft Graph), Azure DevOps  
 **Prerequisites**: Run `python demos/setup_scenario_1.py`
 
-> "Look up who is on the Platform Engineering team using Microsoft Graph. Find
-> the current on-call engineer and assign the open critical incident ticket in
-> Azure DevOps to them. Send a Teams notification to the engineer with the
-> incident summary."
+> "Look up who is on the Platform Engineering team using the Enterprise MCP
+> Server (Microsoft Graph). Find the current on-call engineer and assign the
+> open critical incident ticket in Azure DevOps to them."
 
 ---
 
 ### Prompt 4 — Full Incident Response Chain
 
-**MCP Servers**: Azure Monitor, Azure DevOps, Microsoft Graph  
+**MCP Servers**: Azure MCP Server (monitor), Enterprise MCP (Graph)  
 **Prerequisites**: Run `python demos/setup_scenario_1.py`
 
 > "We have a production incident. First, fetch all critical alerts from Azure
-> Monitor for the last hour. Then look at the application error logs to identify
-> the root cause. Create a Severity 1 incident ticket in Azure DevOps with all
-> relevant details. Finally, find the on-call Platform engineer via Microsoft
-> Graph and assign the ticket to them."
+> Monitor via the Azure MCP Server for the last hour. Then look at the
+> application error logs to identify the root cause. Create a Severity 1
+> incident ticket in Azure DevOps with all relevant details. Finally, find the
+> on-call Platform engineer via the Enterprise MCP Server and assign the ticket
+> to them."
+
+---
+
+## Scenario 3: Multi-Agent Incident Remediation (Handoff)
+
+### Prompt 5 — Run Multi-Agent Orchestration
+
+**Framework**: Semantic Kernel Handoff Orchestration  
+**Prerequisites**: Run `python demos/setup_scenario_3.py`
+
+> "Run the multi-agent incident remediation workflow. A TriageAgent should
+> classify the CheckoutService database timeout as Sev1 and identify the blast
+> radius. Then hand off to a DiagnosticsAgent for root-cause analysis using
+> Application Insights logs. Finally, hand off to a RemediationAgent to create
+> an Azure DevOps ticket and assign the on-call engineer."
+
+---
+
+### Prompt 6 — Agent-to-Agent Handoff Demonstration
+
+**Framework**: Semantic Kernel Handoff Orchestration  
+**Prerequisites**: Run `python demos/setup_scenario_3.py`
+
+> "Demonstrate the Handoff orchestration pattern: have a TriageAgent analyze
+> current Azure Monitor alerts, then hand off its findings to a Diagnostics
+> Agent that correlates Application Insights traces. The DiagnosticsAgent should
+> then hand off to a RemediationAgent that creates work items and assigns engineers."
 
 ---
 
 ## Scenario 5: Development Velocity Analysis
 
-### Prompt 5 — Sprint Velocity Report
+### Prompt 7 — Sprint Velocity Report
 
 **MCP Servers**: Azure DevOps  
 **Prerequisites**: Run `python demos/setup_scenario_5.py`
@@ -71,9 +100,9 @@ includes the MCP servers it exercises and any data prerequisites.
 
 ---
 
-### Prompt 6 — Build & Deployment Health
+### Prompt 8 — Build & Deployment Health
 
-**MCP Servers**: Azure Monitor  
+**MCP Servers**: Azure MCP Server (monitor namespace)  
 **Prerequisites**: Run `python demos/setup_scenario_5.py`
 
 > "Query Azure Monitor for the ContosoApp-CI build pipeline metrics over the
@@ -83,7 +112,7 @@ includes the MCP servers it exercises and any data prerequisites.
 
 ---
 
-### Prompt 7 — Code Review Cycle Analysis
+### Prompt 9 — Code Review Cycle Analysis
 
 **MCP Servers**: Azure DevOps  
 **Prerequisites**: Run `python demos/setup_scenario_5.py`
@@ -94,9 +123,9 @@ includes the MCP servers it exercises and any data prerequisites.
 
 ---
 
-### Prompt 8 — Historical Trend Forecasting
+### Prompt 10 — Historical Trend Forecasting
 
-**MCP Servers**: Cosmos DB, Azure DevOps  
+**MCP Servers**: Azure MCP Server (cosmos namespace), Azure DevOps  
 **Prerequisites**: Run `python demos/setup_scenario_5.py`
 
 > "Read the velocity trend documents from the dev_analytics Cosmos DB database
@@ -106,26 +135,27 @@ includes the MCP servers it exercises and any data prerequisites.
 
 ---
 
-### Prompt 9 — Full Velocity Dashboard
+### Prompt 11 — Full Velocity Dashboard
 
-**MCP Servers**: Azure DevOps, Azure Monitor, Cosmos DB  
+**MCP Servers**: Azure MCP Server (monitor, cosmos namespaces), Azure DevOps  
 **Prerequisites**: Run `python demos/setup_scenario_5.py`
 
 > "Build me a comprehensive development velocity report. Pull sprint data from
-> Azure DevOps, build/deployment metrics from Azure Monitor, and historical
-> trends from Cosmos DB. Summarize: (1) current velocity vs. target, (2) build
-> stability, (3) deployment cadence, (4) code review efficiency. Recommend 3
-> specific actions to improve team throughput."
+> Azure DevOps, build/deployment metrics from Azure Monitor (via Azure MCP
+> Server), and historical trends from Cosmos DB (via Azure MCP Server). Summarize:
+> (1) current velocity vs. target, (2) build stability, (3) deployment cadence,
+> (4) code review efficiency. Recommend 3 specific actions to improve throughput."
 
 ---
 
-### Prompt 10 — Cross-Scenario: Incident Impact on Velocity
+### Prompt 12 — Cross-Scenario: Incident Impact on Velocity
 
-**MCP Servers**: Azure Monitor, Azure DevOps, Cosmos DB  
+**MCP Servers**: Azure MCP Server (monitor, cosmos namespaces), Azure DevOps  
 **Prerequisites**: Run both `setup_scenario_1.py` and `setup_scenario_5.py`
 
 > "We had a critical incident last sprint. Correlate the incident alerts from
-> Azure Monitor with the sprint velocity data in Azure DevOps. Did the incident
-> cause a velocity dip? Check Cosmos DB historical trends to see if this is a
-> recurring pattern. Recommend process improvements to minimize incident impact
-> on delivery velocity."
+> the Azure MCP Server (monitor namespace) with the sprint velocity data in
+> Azure DevOps. Did the incident cause a velocity dip? Check Cosmos DB
+> historical trends (via Azure MCP Server) to see if this is a recurring
+> pattern. Recommend process improvements to minimize incident impact on
+> delivery velocity."

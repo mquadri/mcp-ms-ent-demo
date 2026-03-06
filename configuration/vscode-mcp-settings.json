@@ -1,52 +1,17 @@
 {
   "mcpServers": {
-    "azure-monitor": {
+    "azure-mcp-server": {
       "command": "npx",
-      "args": ["-y", "@azure/mcp-server-monitor"],
+      "args": ["-y", "@azure/mcp@latest", "server", "start"],
       "env": {
         "AZURE_SUBSCRIPTION_ID": "${input:subscriptionId}",
-        "AZURE_RESOURCE_GROUP": "${input:resourceGroup}",
-        "LOG_ANALYTICS_WORKSPACE_ID": "${input:workspaceId}"
-      }
-    },
-    "azure-devops": {
-      "command": "npx",
-      "args": ["-y", "@azure/mcp-server-devops"],
-      "env": {
-        "AZURE_DEVOPS_ORG_URL": "${input:devopsOrgUrl}",
-        "AZURE_DEVOPS_PROJECT": "${input:devopsProject}",
-        "AZURE_DEVOPS_PAT": "${input:devopsPat}"
-      }
-    },
-    "microsoft-graph": {
-      "command": "npx",
-      "args": ["-y", "@azure/mcp-server-graph"],
-      "env": {
-        "AZURE_TENANT_ID": "${input:tenantId}",
-        "AZURE_CLIENT_ID": "${input:clientId}",
-        "AZURE_CLIENT_SECRET": "${input:clientSecret}"
-      }
-    },
-    "azure-cosmos": {
-      "command": "npx",
-      "args": ["-y", "@azure/mcp-server-cosmos"],
-      "env": {
-        "COSMOS_DB_ENDPOINT": "${input:cosmosEndpoint}",
-        "COSMOS_DB_KEY": "${input:cosmosKey}"
+        "AZURE_TENANT_ID": "${input:tenantId}"
       }
     }
   },
   "inputs": [
     { "id": "subscriptionId", "type": "promptString", "description": "Azure Subscription ID" },
-    { "id": "resourceGroup", "type": "promptString", "description": "Azure Resource Group", "default": "contoso-monitoring" },
-    { "id": "workspaceId", "type": "promptString", "description": "Log Analytics Workspace ID" },
-    { "id": "devopsOrgUrl", "type": "promptString", "description": "Azure DevOps Org URL", "default": "https://dev.azure.com/contoso-org" },
-    { "id": "devopsProject", "type": "promptString", "description": "Azure DevOps Project", "default": "ContosoApp" },
-    { "id": "devopsPat", "type": "promptString", "description": "Azure DevOps PAT", "password": true },
-    { "id": "tenantId", "type": "promptString", "description": "Azure AD Tenant ID" },
-    { "id": "clientId", "type": "promptString", "description": "Azure AD Client ID" },
-    { "id": "clientSecret", "type": "promptString", "description": "Azure AD Client Secret", "password": true },
-    { "id": "cosmosEndpoint", "type": "promptString", "description": "Cosmos DB Endpoint" },
-    { "id": "cosmosKey", "type": "promptString", "description": "Cosmos DB Key", "password": true }
-  ]
+    { "id": "tenantId", "type": "promptString", "description": "Azure AD Tenant ID" }
+  ],
+  "note_enterprise_mcp": "To add the official Microsoft MCP Server for Enterprise, click: https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d — Requires tenant provisioning first (see docs/DEMO_PLAN_REAL.md)"
 }
