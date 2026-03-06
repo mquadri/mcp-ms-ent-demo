@@ -1,51 +1,77 @@
 {
   "mcpServers": {
     "azure-monitor": {
-      "httpUrl": "https://monitor.azure.com/mcp",
-      "authProviderType": "azure_managed_identity",
-      "subscriptionId": "YOUR_SUBSCRIPTION_ID",
-      "resourceGroup": "contoso-monitoring",
-      "logAnalyticsWorkspaceId": "YOUR_LOG_ANALYTICS_WORKSPACE_ID",
+      "command": "npx",
+      "args": ["-y", "@azure/mcp-server-monitor"],
+      "env": {
+        "AZURE_SUBSCRIPTION_ID": "YOUR_SUBSCRIPTION_ID",
+        "AZURE_RESOURCE_GROUP": "contoso-monitoring",
+        "LOG_ANALYTICS_WORKSPACE_ID": "YOUR_LOG_ANALYTICS_WORKSPACE_ID"
+      },
       "capabilities": {
-        "queries": [
+        "tools": [
           "fetch_critical_alerts",
           "get_error_logs",
+          "query_log_analytics",
           "analyze_performance_metrics",
-          "get_affected_resources"
+          "get_affected_resources",
+          "get_alert_rules"
         ]
       }
     },
     "azure-devops": {
-      "httpUrl": "https://dev.azure.com/mcp",
-      "authProviderType": "pat_token",
-      "organizationUrl": "https://dev.azure.com/contoso-org",
-      "project": "ContosoApp",
-      "personalAccessToken": "YOUR_PAT_TOKEN",
+      "command": "npx",
+      "args": ["-y", "@azure/mcp-server-devops"],
+      "env": {
+        "AZURE_DEVOPS_ORG_URL": "https://dev.azure.com/contoso-org",
+        "AZURE_DEVOPS_PROJECT": "ContosoApp",
+        "AZURE_DEVOPS_PAT": "YOUR_PAT_TOKEN"
+      },
       "capabilities": {
-        "operations": [
+        "tools": [
           "create_work_item",
           "update_work_item",
           "assign_work_item",
           "query_work_items",
+          "get_sprint_metrics",
+          "get_repo_statistics",
+          "get_build_pipeline_runs",
           "get_team_members"
         ]
       }
     },
     "microsoft-graph": {
-      "httpUrl": "https://graph.microsoft.com/mcp",
-      "authProviderType": "oauth2",
-      "tenantId": "YOUR_TENANT_ID",
-      "clientId": "YOUR_CLIENT_ID",
-      "clientSecret": "YOUR_CLIENT_SECRET",
-      "scopes": [
-        "https://graph.microsoft.com/.default"
-      ],
+      "command": "npx",
+      "args": ["-y", "@azure/mcp-server-graph"],
+      "env": {
+        "AZURE_TENANT_ID": "YOUR_TENANT_ID",
+        "AZURE_CLIENT_ID": "YOUR_CLIENT_ID",
+        "AZURE_CLIENT_SECRET": "YOUR_CLIENT_SECRET"
+      },
       "capabilities": {
-        "queries": [
+        "tools": [
           "get_user_info",
           "get_team_info",
           "get_organizational_hierarchy",
-          "send_notification"
+          "send_notification",
+          "send_teams_message"
+        ]
+      }
+    },
+    "azure-cosmos": {
+      "command": "npx",
+      "args": ["-y", "@azure/mcp-server-cosmos"],
+      "env": {
+        "COSMOS_DB_ENDPOINT": "YOUR_COSMOS_ENDPOINT",
+        "COSMOS_DB_KEY": "YOUR_COSMOS_KEY"
+      },
+      "capabilities": {
+        "tools": [
+          "query_documents",
+          "read_document",
+          "upsert_document",
+          "list_databases",
+          "list_containers"
         ]
       }
     }
