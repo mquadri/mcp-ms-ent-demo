@@ -1,0 +1,53 @@
+{
+  "mcpServers": {
+    "azure-monitor": {
+      "httpUrl": "https://monitor.azure.com/mcp",
+      "authProviderType": "azure_managed_identity",
+      "subscriptionId": "YOUR_SUBSCRIPTION_ID",
+      "resourceGroup": "contoso-monitoring",
+      "logAnalyticsWorkspaceId": "YOUR_LOG_ANALYTICS_WORKSPACE_ID",
+      "capabilities": {
+        "queries": [
+          "fetch_critical_alerts",
+          "get_error_logs",
+          "analyze_performance_metrics",
+          "get_affected_resources"
+        ]
+      }
+    },
+    "azure-devops": {
+      "httpUrl": "https://dev.azure.com/mcp",
+      "authProviderType": "pat_token",
+      "organizationUrl": "https://dev.azure.com/contoso-org",
+      "project": "ContosoApp",
+      "personalAccessToken": "YOUR_PAT_TOKEN",
+      "capabilities": {
+        "operations": [
+          "create_work_item",
+          "update_work_item",
+          "assign_work_item",
+          "query_work_items",
+          "get_team_members"
+        ]
+      }
+    },
+    "microsoft-graph": {
+      "httpUrl": "https://graph.microsoft.com/mcp",
+      "authProviderType": "oauth2",
+      "tenantId": "YOUR_TENANT_ID",
+      "clientId": "YOUR_CLIENT_ID",
+      "clientSecret": "YOUR_CLIENT_SECRET",
+      "scopes": [
+        "https://graph.microsoft.com/.default"
+      ],
+      "capabilities": {
+        "queries": [
+          "get_user_info",
+          "get_team_info",
+          "get_organizational_hierarchy",
+          "send_notification"
+        ]
+      }
+    }
+  }
+}
