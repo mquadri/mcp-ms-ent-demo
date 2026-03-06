@@ -1,13 +1,14 @@
 # Microsoft Enterprise MCP Servers - Demo Scenarios
 
-This directory contains end-to-end scenarios demonstrating **Microsoft Enterprise MCP Servers** with real-world use cases. Each scenario includes setup scripts to populate sample data and prompts for testing with GitHub Copilot or other AI agents.
+This directory contains end-to-end scenarios demonstrating **official Microsoft MCP Servers** and the **Semantic Kernel Agent Framework** with real-world use cases. Each scenario includes setup scripts to populate sample data and prompts for testing with GitHub Copilot or other AI agents.
 
 ## Scenario Overview
 
-| Scenario | Focus | MCP Servers Used |
-|----------|-------|-----------------|
-| **1** | Automated Incident Response | Azure Monitor, Azure DevOps, Microsoft Graph |
-| **5** | Development Velocity Analysis | Azure DevOps, Azure Monitor, Cosmos DB |
+| Scenario | Focus | Pattern | MCP Servers / Frameworks |
+|----------|-------|---------|--------------------------|
+| **1** | Automated Incident Response | Single-agent, multi-tool | Azure MCP Server (monitor), Enterprise MCP |
+| **3** | Multi-Agent Incident Remediation | **Handoff Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
+| **5** | Development Velocity Analysis | **Sequential Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
 
 ---
 
@@ -23,8 +24,8 @@ Follow these steps to configure your environment and enable the necessary MCP se
   az login
   az account set --subscription YOUR_SUBSCRIPTION_ID
   ```
-- **Python 3.9+**
-- **Node.js 18+** (for MCP server packages via `npx`)
+- **Python 3.10+**
+- **Node.js 18+** (for Azure MCP Server via `npx`)
 - **Git**
 
 ### 2. Required Azure Resources
@@ -133,42 +134,25 @@ Add the following to your MCP client's settings. Replace placeholders with your 
 ```json
 {
   "mcpServers": {
-    "azure-monitor": {
+    "azure-mcp-server": {
       "command": "npx",
-      "args": ["-y", "@azure/mcp-server-monitor"],
+      "args": ["-y", "@azure/mcp@latest", "server", "start"],
       "env": {
         "AZURE_SUBSCRIPTION_ID": "YOUR_SUBSCRIPTION_ID",
-        "AZURE_RESOURCE_GROUP": "contoso-monitoring",
-        "LOG_ANALYTICS_WORKSPACE_ID": "YOUR_WORKSPACE_ID"
-      }
-    },
-    "azure-devops": {
-      "command": "npx",
-      "args": ["-y", "@azure/mcp-server-devops"],
-      "env": {
-        "AZURE_DEVOPS_ORG_URL": "https://dev.azure.com/YOUR_ORG",
-        "AZURE_DEVOPS_PROJECT": "ContosoApp",
-        "AZURE_DEVOPS_PAT": "YOUR_PAT"
-      }
-    },
-    "microsoft-graph": {
-      "command": "npx",
-      "args": ["-y", "@azure/mcp-server-graph"],
-      "env": {
-        "AZURE_TENANT_ID": "YOUR_TENANT_ID",
-        "AZURE_CLIENT_ID": "YOUR_CLIENT_ID",
-        "AZURE_CLIENT_SECRET": "YOUR_CLIENT_SECRET"
-      }
-    },
-    "azure-cosmos": {
-      "command": "npx",
-      "args": ["-y", "@azure/mcp-server-cosmos"],
-      "env": {
-        "COSMOS_DB_ENDPOINT": "YOUR_COSMOS_ENDPOINT",
-        "COSMOS_DB_KEY": "YOUR_COSMOS_KEY"
+        "AZURE_TENANT_ID": "YOUR_TENANT_ID"
       }
     }
   }
+}
+```
+
+For the Microsoft Enterprise MCP Server, use the [one-click install link](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) or add manually:
+
+```json
+{
+  "name": "Microsoft MCP Server for Enterprise",
+  "type": "http",
+  "url": "https://mcp.svc.cloud.microsoft/enterprise"
 }
 ```
 
@@ -182,9 +166,9 @@ In VS Code with GitHub Copilot, open the MCP panel to verify your servers are co
 
 ### 1. Automated Incident Response (DevOps)
 
-**Use Case**: A sudden spike in checkout service errors triggers alerts. The AI agent pulls critical alerts from Azure Monitor, correlates error logs, creates an incident ticket in Azure DevOps, looks up the on-call engineer via Microsoft Graph, and assigns the ticket.
+**Use Case**: A sudden spike in checkout service errors triggers alerts. The AI agent pulls critical alerts from Azure Monitor (via Azure MCP Server), correlates error logs, creates an incident ticket in Azure DevOps, looks up the on-call engineer via Enterprise MCP (Microsoft Graph), and assigns the ticket.
 
-**MCP Servers**: Azure Monitor, Azure DevOps, Microsoft Graph
+**MCP Servers**: Azure MCP Server (monitor namespace), Enterprise MCP (Graph)
 
 **Setup**:
 
@@ -234,15 +218,93 @@ Mode: MOCK DATA
 
 > "Our monitoring is alerting on the CheckoutService. Fetch all active critical alerts from Azure Monitor for the contoso-monitoring resource group. For each alert, extract the service name, error code, and affected resources. Summarize the incident timeline."
 
-> "Pull the last 10 ERROR-level application logs from CheckoutService. Identify the root cause. Create a Severity 1 bug in Azure DevOps with the error details, then find the on-call Platform engineer via Microsoft Graph and assign the ticket to them."
+> "Pull the last 10 ERROR-level application logs from CheckoutService. Identify the root cause. Create a Severity 1 bug in Azure DevOps with the error details, then find the on-call Platform engineer via Enterprise MCP (Microsoft Graph) and assign the ticket to them."
+
+---
+
+### 3. Multi-Agent Incident Remediation (Agent-to-Agent Handoff)
+
+**Use Case**: A complex production incident requires multiple specialized agents working together. Instead of a single AI agent handling everything, three agents collaborate using the **Semantic Kernel Handoff Orchestration** pattern: TriageAgent classifies the incident, DiagnosticsAgent performs root-cause analysis, and RemediationAgent creates tickets and assigns on-call.
+
+**Frameworks**: Microsoft Semantic Kernel Agent Framework (Handoff pattern) + Azure MCP Server + Enterprise MCP
+
+**Setup**:
+
+This setup script populates the same incident data as Scenario 1, plus multi-agent orchestration metadata:
+
+- **Azure Monitor**: Seeds 3 critical alerts (same as Scenario 1)
+- **Application Insights**: Error logs with stack traces and request IDs
+- **Agent Handoff Log**: Pre-computed handoff chain metadata (TriageAgent → DiagnosticsAgent → RemediationAgent)
+
+```bash
+# Seed data
+python demos/setup_scenario_3.py
+
+# Run the multi-agent orchestration (mock mode)
+python agents/incident_remediation.py
+
+# Or with real Semantic Kernel + Azure OpenAI
+python agents/incident_remediation.py --real
+```
+
+**Expected Output**:
+```
+╔══════════════════════════════════════════════════════════════════════╗
+║  SCENARIO 3: MULTI-AGENT INCIDENT REMEDIATION                     ║
+║  Pattern: Semantic Kernel Handoff Orchestration                    ║
+╚══════════════════════════════════════════════════════════════════════╝
+Mode: MOCK DATA
+
+======================================================================
+🔍 TRIAGE AGENT — Classifying Incident
+======================================================================
+📊 Querying Azure MCP Server → monitor namespace...
+   ✓ [Critical] CheckoutService: Database connection timeout
+   ✓ [Critical] PaymentGateway: Payment processor API returning 503 errors
+
+🏷️  Classification: Sev1
+💥 Blast Radius: 4 resources across 2 services
+
+➡️  HANDOFF → DiagnosticsAgent
+
+======================================================================
+🔬 DIAGNOSTICS AGENT — Root Cause Analysis
+======================================================================
+📋 Querying Azure MCP Server → applicationinsights namespace...
+🔗 Correlating events...
+🎯 Root Cause: Database connection pool exhaustion in CheckoutService
+
+➡️  HANDOFF → RemediationAgent
+
+======================================================================
+🛠️  REMEDIATION AGENT — Driving Resolution
+======================================================================
+📋 Creating work item in Azure DevOps...
+   ✓ Created Bug #54321
+👤 Querying Enterprise MCP → microsoft_graph_get...
+   ✓ On-call: Ahmed Hassan (ahmed.hassan@contoso.com)
+✅ Assigning Bug #54321 to Ahmed Hassan...
+
+======================================================================
+✅ SCENARIO 3 — MULTI-AGENT INCIDENT REMEDIATION COMPLETE
+======================================================================
+Agents involved: TriageAgent → DiagnosticsAgent → RemediationAgent
+Total handoffs:  2
+```
+
+**Copilot Prompts (for real SK mode)**:
+
+> "Run the multi-agent incident remediation for a CheckoutService database timeout. Let the TriageAgent classify the severity, then hand off to DiagnosticsAgent for root-cause analysis, and finally to RemediationAgent to create a ticket and assign the on-call engineer."
 
 ---
 
 ### 5. Migration Performance Validation / Development Velocity Analysis (Ops/Eng)
 
-**Use Case**: The engineering team needs a comprehensive view of development velocity — sprint metrics, build/deployment performance, code review efficiency, and 12-week historical trends — to identify bottlenecks and drive improvements.
+**Use Case**: The engineering team needs a comprehensive view of development velocity — sprint metrics, build/deployment performance, code review efficiency, and 12-week historical trends — to identify bottlenecks and drive improvements. Three specialized agents form a **Sequential Orchestration** pipeline: MetricsCollectorAgent gathers data, TrendAnalystAgent performs analysis and forecasting, and AdvisorAgent generates an executive report with prioritized recommendations.
 
-**MCP Servers**: Azure DevOps, Azure Monitor, Cosmos DB
+**Pattern**: Semantic Kernel Sequential Orchestration (different from Scenario 3's Handoff)
+
+**MCP Servers / Frameworks**: Azure MCP Server (monitor, cosmos namespaces), Enterprise MCP (Graph), SK Agent Framework
 
 **Setup**:
 
@@ -254,9 +316,76 @@ This setup script populates data across three services for velocity analysis:
 
 ```bash
 python demos/setup_scenario_5.py
+
+# Run the multi-agent velocity analysis (mock mode)
+python agents/velocity_analysis.py
+
+# Or with real Semantic Kernel + Azure OpenAI
+python agents/velocity_analysis.py --real
 ```
 
-**Expected Output**:
+**Expected Output (Multi-Agent)**:
+```
+╔══════════════════════════════════════════════════════════════════════╗
+║  SCENARIO 5: MULTI-AGENT DEVELOPMENT VELOCITY ANALYSIS             ║
+║  Pattern: Semantic Kernel Sequential Orchestration                  ║
+╚══════════════════════════════════════════════════════════════════════╝
+Mode: MOCK DATA
+
+======================================================================
+📥 METRICS COLLECTOR AGENT — Gathering Data
+======================================================================
+📊 Querying Azure DevOps → Sprint metrics...
+   ✓ Sprint 24: 156/160 pts, 90.5% complete
+   ✓ Sprint 23: 152/155 pts, 95.0% complete
+   ✓ Sprint 22: 148/150 pts, 94.7% complete
+
+📈 Querying Azure DevOps → Repository statistics...
+   ✓ Commits/day: 42, PRs merged/day: 8
+
+🔨 Querying Azure MCP Server → monitor namespace (build logs)...
+   ✓ 118 builds, 84.7% success rate
+
+🚀 Querying Azure MCP Server → monitor namespace (deployment logs)...
+   ✓ 58 deployments, 28 to production
+
+📊 Querying Azure MCP Server → cosmos namespace (12-week trends)...
+   ✓ Retrieved 12 weekly trend documents
+
+➡️  Passing to TrendAnalystAgent
+
+======================================================================
+📊 TREND ANALYST AGENT — Analyzing Metrics
+======================================================================
+📈 Velocity Trend: 148 → 156 pts (+5.4% — Accelerating)
+🔨 Build Stability: 84.7% — 🟡 Needs Attention
+🚀 Deployment Cadence: 0.9 deploys/day, 8.6% rollback rate
+⚠️  Anomalies: 2 detected
+🔮 Sprint 25 Forecast: 160 pts
+
+➡️  Passing to AdvisorAgent
+
+======================================================================
+💡 ADVISOR AGENT — Generating Recommendations
+======================================================================
+👥 Querying Enterprise MCP → engineering leadership...
+📋 Generated 4 Recommendations
+
+📊 EXECUTIVE VELOCITY REPORT
+   Velocity: Accelerating (+5.4%)
+   Build Health: 🟡 Needs Attention
+   Deploy Rate: 0.9 deploys/day
+   Forecast: Sprint 25 → 160 pts
+   Actions: 4 recommendations generated
+
+======================================================================
+✅ SCENARIO 5 — MULTI-AGENT VELOCITY ANALYSIS COMPLETE
+======================================================================
+Agents: MetricsCollectorAgent → TrendAnalystAgent → AdvisorAgent
+Pattern: Sequential Orchestration (Semantic Kernel)
+```
+
+**Data Setup Expected Output**:
 ```
 ======================================================================
 📊 SCENARIO 5: DEVELOPMENT VELOCITY ANALYSIS - SETUP
@@ -306,7 +435,9 @@ Mode: MOCK DATA
 > "Read the velocity trend documents from Cosmos DB (dev_analytics / velocity_metrics). Plot the 12-week trajectory and forecast next sprint's expected velocity."
 
 > "Build me a comprehensive development velocity report combining sprint data from DevOps, build metrics from Azure Monitor, and historical trends from Cosmos DB. Recommend 3 actions to improve throughput."
+**Multi-Agent Prompts (for real SK mode)**:
 
+> "Run the multi-agent velocity analysis pipeline. Have MetricsCollectorAgent gather sprint, build, deployment, and trend data. Then TrendAnalystAgent should analyze trends, detect anomalies, and forecast next sprint. Finally, AdvisorAgent should generate an executive report with prioritized recommendations and assigned owners."
 ---
 
 ## Mock Data Generator

@@ -1,10 +1,15 @@
 # Microsoft Enterprise MCP Servers
 
-A collection of resources for working with **Microsoft Enterprise MCP Servers**. This repository contains configuration files, demo scenarios, and sample prompts to help you integrate AI agents (GitHub Copilot, VS Code, and other MCP clients) with Microsoft cloud services through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/).
+A collection of resources for working with **official Microsoft MCP Servers** and the **Microsoft Semantic Kernel Agent Framework**. This repository contains configuration files, demo scenarios (including a multi-agent handoff demo), and sample prompts to help you integrate AI agents (GitHub Copilot, VS Code, and other MCP clients) with Microsoft cloud services through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/).
 
 ## What are Microsoft Enterprise MCP Servers?
 
-Microsoft Enterprise MCP Servers expose Azure and Microsoft 365 services as tools that AI agents can call. Using MCP, you can give AI agents the ability to query Azure Monitor alerts, create Azure DevOps work items, look up users in Microsoft Graph, read Cosmos DB documents, and more — all from natural language prompts.
+Microsoft provides two official MCP servers that expose Azure and Microsoft 365 services as tools AI agents can call:
+
+1. **[Azure MCP Server](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/)** — A unified MCP server covering 50+ Azure services (Monitor, Cosmos DB, Application Insights, Key Vault, Storage, App Service, Functions, AKS, RBAC, Deploy, and more). Package: `@azure/mcp` (npm) / `Azure.Mcp` (NuGet) / `msmcp-azure` (PyPI).
+2. **[Microsoft MCP Server for Enterprise](https://learn.microsoft.com/en-us/graph/mcp-server/overview)** — A hosted MCP server for Microsoft Graph and Entra ID queries, powered by RAG over 500+ API examples. Endpoint: `https://mcp.svc.cloud.microsoft/enterprise`.
+
+This repo also demonstrates the **Microsoft Semantic Kernel Agent Framework** — specifically the [Handoff Orchestration](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/handoff) pattern — where multiple specialized agents collaborate by handing off context to each other.
 
 ## Repository Structure
 
@@ -14,6 +19,11 @@ Microsoft Enterprise MCP Servers expose Azure and Microsoft 365 services as tool
 ├── .env.example                             # Environment variables template
 ├── .gitignore                               # Git ignore rules
 ├── Contribution.md                          # Contributing guidelines
+├── agents/
+│   ├── README.md                            # Multi-agent architecture guide
+│   ├── agent_definitions.yaml               # Agent configs (prompts, tools, handoffs)
+│   ├── incident_remediation.py              # Scenario 3 — Handoff orchestration
+│   └── velocity_analysis.py                 # Scenario 5 — Sequential orchestration
 ├── configuration/
 │   ├── README.md                            # Configuration guide
 │   ├── copilot-enterprise-settings.json     # Full MCP server configuration
@@ -22,24 +32,32 @@ Microsoft Enterprise MCP Servers expose Azure and Microsoft 365 services as tool
 │   ├── README.md                            # Full setup guide & scenario catalog
 │   ├── requirements.txt                     # Python dependencies
 │   ├── mock_data_generator.py               # Mock data generation utility
-│   ├── scenario_1_inject.ps1                # Inject sample logs (Scenario 1)
 │   ├── setup_scenario_1.py                  # Setup data for Scenario 1
+│   ├── setup_scenario_3.py                  # Setup data for Scenario 3
 │   ├── setup_scenario_5.py                  # Setup data for Scenario 5
+│   ├── demo_prep.ps1                        # One-script demo provisioning
 │   └── SETUP_SUMMARY.md                     # Setup summary
 ├── docs/
-│   └── architecture.md                      # System architecture
+│   ├── architecture.md                      # System architecture
+│   └── DEMO_PLAN_REAL.md                    # 🔴 Real demo plan (Open Mic Friday)
 └── prompts/
-    └── getting-started.md                   # 10 sample prompts across scenarios
+    └── getting-started.md                   # Sample prompts across all scenarios
 ```
 
-## Available MCP Servers
+## Official Microsoft MCP Servers
 
-| Server | Description | Auth |
-|--------|-------------|------|
-| **Azure Monitor** | Query alerts, error logs, performance metrics, Log Analytics | Azure Identity / Managed Identity |
-| **Azure DevOps** | Create/update work items, query sprints, repo stats, build pipelines | Personal Access Token (PAT) |
-| **Microsoft Graph** | User info, team lookups, org hierarchy, Teams notifications | OAuth2 (Client Credentials) |
-| **Azure Cosmos DB** | Query documents, read/write items, list databases/containers | Cosmos DB Key / Azure Identity |
+This repo uses **only** official Microsoft MCP servers — no third-party or fictitious packages.
+
+| Server | Package / Endpoint | Description | Auth |
+|--------|-------------------|-------------|------|
+| **[Azure MCP Server](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/)** | `npx -y @azure/mcp@latest server start` | Unified server: Azure Monitor, Cosmos DB, App Insights, Key Vault, Storage, App Service, Functions, AKS, RBAC, Deploy, Event Grid, Service Bus, AI Search, and more | Entra ID / Azure Identity / RBAC |
+| **[MS Enterprise MCP](https://learn.microsoft.com/en-us/graph/mcp-server/overview)** | `https://mcp.svc.cloud.microsoft/enterprise` | Microsoft Graph & Entra ID queries via RAG — users, groups, apps, roles, PIM, compliance | Delegated (OAuth2 via VS Code) |
+
+### Azure MCP Server Tool Namespaces
+
+The Azure MCP Server exposes tools organized by namespace. Configure which namespaces to enable:
+
+`monitor` · `cosmos` · `applicationinsights` · `keyvault` · `storage` · `appservice` · `functionapp` · `aks` · `role` · `advisor` · `deploy` · `eventgrid` · `eventhubs` · `servicebus` · `search` · `sql` · `postgres` · `mysql` · `redis` · `loadtesting` · `grafana` · `workbooks` · `bicepschema` · `resourcehealth` · `quota`
 
 ## Prerequisites
 
@@ -49,18 +67,19 @@ Microsoft Enterprise MCP Servers expose Azure and Microsoft 365 services as tool
   az login
   az account set --subscription YOUR_SUBSCRIPTION_ID
   ```
-- **Node.js 18+** (for MCP server packages via `npx`)
-- **Python 3.9+** (for demo setup scripts)
+- **Node.js 18+** (for Azure MCP Server via `npx`)
+- **Python 3.10+** (for demo setup scripts and Semantic Kernel agents)
 - **Git**
 
 ### Required Azure Resources by Scenario
 
-| Resource | Scenario 1 | Scenario 5 |
-|----------|:----------:|:----------:|
-| Log Analytics Workspace | ✅ | ✅ |
-| Azure DevOps Organization + Project | ✅ | ✅ |
-| Azure AD App Registration (Graph) | ✅ | |
-| Cosmos DB Account | | ✅ |
+| Resource | Scenario 1 | Scenario 3 | Scenario 5 |
+|----------|:----------:|:----------:|:----------:|
+| Log Analytics Workspace | ✅ | ✅ | ✅ |
+| Azure DevOps Organization + Project | ✅ | ✅ | ✅ |
+| Cosmos DB Account | | | ✅ |
+| Azure OpenAI Deployment | | ✅ (for real SK agents) | ✅ (for real SK agents) |
+| Enterprise MCP Tenant Registration | | ✅ | ✅ |
 
 > **Mock mode**: All setup scripts support `USE_MOCK_DATA=true` (the default) which requires **no Azure credentials**. This is ideal for exploring the scenarios locally.
 
@@ -77,35 +96,29 @@ The [configuration/](configuration/) directory provides ready-to-use templates f
 ```json
 {
   "mcpServers": {
-    "azure-monitor": {
+    "azure-mcp-server": {
       "command": "npx",
-      "args": ["-y", "@azure/mcp-server-monitor"],
+      "args": ["-y", "@azure/mcp@latest", "server", "start"],
       "env": {
         "AZURE_SUBSCRIPTION_ID": "YOUR_SUBSCRIPTION_ID",
-        "LOG_ANALYTICS_WORKSPACE_ID": "YOUR_WORKSPACE_ID"
-      }
-    },
-    "azure-devops": {
-      "command": "npx",
-      "args": ["-y", "@azure/mcp-server-devops"],
-      "env": {
-        "AZURE_DEVOPS_ORG_URL": "https://dev.azure.com/YOUR_ORG",
-        "AZURE_DEVOPS_PROJECT": "YOUR_PROJECT",
-        "AZURE_DEVOPS_PAT": "YOUR_PAT"
+        "AZURE_TENANT_ID": "YOUR_TENANT_ID"
       }
     }
   }
 }
 ```
 
+To add the Microsoft Enterprise MCP Server, use the [one-click install link](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) (requires [tenant provisioning](docs/DEMO_PLAN_REAL.md) first).
+
 See [configuration/README.md](configuration/README.md) for full details.
 
 ## Demo Scenarios
 
-| # | Scenario | MCP Servers Used |
-|---|----------|-----------------|
-| **1** | Automated Incident Response | Azure Monitor, Azure DevOps, Microsoft Graph |
-| **5** | Development Velocity Analysis | Azure DevOps, Azure Monitor, Cosmos DB |
+| # | Scenario | Pattern | MCP Servers / Frameworks |
+|---|----------|---------|--------------------------|
+| **1** | Automated Incident Response | Single-agent, multi-tool | Azure MCP Server (monitor), Enterprise MCP (Graph) |
+| **3** | Multi-Agent Incident Remediation | **Handoff Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
+| **5** | Development Velocity Analysis | **Sequential Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
 
 ### Quick Start (3 Steps)
 
@@ -120,20 +133,70 @@ mcp_env\Scripts\activate        # Windows
 # source mcp_env/bin/activate   # macOS/Linux
 pip install -r demos/requirements.txt
 
-# 3. Run a scenario (mock mode by default)
+# 3. Run any scenario (mock mode by default)
 python demos/setup_scenario_1.py
+python demos/setup_scenario_3.py   # Seeds multi-agent data
 python demos/setup_scenario_5.py
+
+# Run multi-agent orchestrations
+python agents/incident_remediation.py   # Scenario 3 — Handoff
+python agents/velocity_analysis.py      # Scenario 5 — Sequential
 ```
 
 See the full setup guide and prompt catalog in [demos/README.md](demos/README.md).
 
+### Scenario 3: Multi-Agent Handoff (Agent-to-Agent)
+
+Scenario 3 demonstrates the **Semantic Kernel Handoff Orchestration** pattern where three specialized agents collaborate:
+
+```
+TriageAgent → DiagnosticsAgent → RemediationAgent
+```
+
+Each agent has its own system prompt, tool access, and domain expertise. Agents dynamically decide when to hand off to the next specialist. This uses the **Microsoft Agent Framework** patterns documented in the [Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns).
+
+See [agents/README.md](agents/README.md) for the full multi-agent architecture.
+
+### Scenario 5: Sequential Pipeline (Agent-to-Agent)
+
+Scenario 5 demonstrates the **Semantic Kernel Sequential Orchestration** pattern — a different pattern from Scenario 3's Handoff — where three agents form a fixed data pipeline:
+
+```
+MetricsCollectorAgent → TrendAnalystAgent → AdvisorAgent
+```
+
+The MetricsCollectorAgent gathers data from Azure DevOps, Azure Monitor, and Cosmos DB. The TrendAnalystAgent performs statistical analysis and anomaly detection. The AdvisorAgent generates an executive summary with prioritized recommendations and assigns owners via Enterprise MCP (Microsoft Graph).
+
+See [agents/README.md](agents/README.md) for the comparison of Handoff vs. Sequential patterns.
+
+### Running a Real Demo
+
+For a live demo with your real Azure environment, see the **[Real Demo Plan](docs/DEMO_PLAN_REAL.md)** which covers:
+
+1. **Tenant provisioning** — Register the [Microsoft MCP Server for Enterprise](https://learn.microsoft.com/en-us/graph/mcp-server/overview) in your Entra tenant
+2. **Azure resource creation** — Log Analytics, Cosmos DB, Azure DevOps project
+3. **Azure MCP Server setup** — `npx -y @azure/mcp@latest server start`
+4. **Data seeding** — Run `demos/demo_prep.ps1` to provision everything
+5. **Multi-agent demo** — Run `agents/incident_remediation.py --real` with Azure OpenAI
+6. **Demo runbook** — Exact prompts and talking points for each scenario
+
 ## Getting Started Prompts
 
-The [prompts/getting-started.md](prompts/getting-started.md) file contains 10 natural language queries that demonstrate multi-tool MCP orchestration across:
+The [prompts/getting-started.md](prompts/getting-started.md) file contains natural language queries that demonstrate MCP orchestration across:
 
-- 🚨 **Incident Response** — Alert triage, log correlation, ticket creation, on-call assignment
-- 📊 **Velocity Analytics** — Sprint metrics, build health, deployment cadence, trend forecasting
+- 🚨 **Incident Response** (Scenario 1) — Alert triage, log correlation, ticket creation
+- 🤖 **Multi-Agent Handoff** (Scenario 3) — Agent-to-agent collaboration for end-to-end incident remediation
+- 📊 **Velocity Analytics** (Scenario 5) — Multi-agent sequential pipeline: data collection, trend analysis, recommendations
 - 🔄 **Cross-Scenario** — Correlating incidents with velocity impact
+
+## Microsoft Frameworks Used
+
+| Framework | Purpose | Docs |
+|-----------|---------|------|
+| **Azure MCP Server** | Unified MCP server for 50+ Azure services | [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/) |
+| **MS Enterprise MCP Server** | Microsoft Graph / Entra ID via MCP | [learn.microsoft.com](https://learn.microsoft.com/en-us/graph/mcp-server/overview) |
+| **Semantic Kernel Agent Framework** | Handoff orchestration for multi-agent scenarios | [learn.microsoft.com](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/) |
+| **Azure Architecture — AI Agent Patterns** | Design patterns: Sequential, Concurrent, Handoff, Group Chat | [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns) |
 
 ## Comparison with Google MCP Servers
 
@@ -142,11 +205,12 @@ This repo is the Microsoft counterpart to [rominirani/google-mcp-servers](https:
 | Aspect | This Repo (Microsoft) | Google MCP Servers |
 |--------|----------------------|-------------------|
 | AI Agent | GitHub Copilot / VS Code | Gemini CLI |
-| Monitoring | Azure Monitor / Log Analytics | Cloud Logging / Cloud Monitoring |
-| Work Tracking | Azure DevOps | — |
-| Identity | Microsoft Graph | — |
-| Database | Cosmos DB | Firestore, BigQuery |
-| Auth | Azure Identity, PAT, OAuth2 | Google Credentials, API Keys |
+| MCP Server | Azure MCP Server (unified, 50+ services) | Individual Google Cloud MCP servers |
+| Monitoring | Azure Monitor / App Insights / Log Analytics | Cloud Logging / Cloud Monitoring |
+| Identity | Enterprise MCP (Graph / Entra ID) | — |
+| Database | Cosmos DB (via Azure MCP) | Firestore, BigQuery |
+| Multi-Agent | Semantic Kernel Handoff + Sequential Orchestration | — |
+| Auth | Entra ID / Azure Identity / RBAC | Google Credentials / API Keys |
 
 ## Contributing
 
