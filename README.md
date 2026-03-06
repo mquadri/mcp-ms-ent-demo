@@ -22,7 +22,8 @@ This repo also demonstrates the **Microsoft Semantic Kernel Agent Framework** �
 ├── agents/
 │   ├── README.md                            # Multi-agent architecture guide
 │   ├── agent_definitions.yaml               # Agent configs (prompts, tools, handoffs)
-│   └── incident_remediation.py              # Scenario 3 — Handoff orchestration
+│   ├── incident_remediation.py              # Scenario 3 — Handoff orchestration
+│   └── velocity_analysis.py                 # Scenario 5 — Sequential orchestration
 ├── configuration/
 │   ├── README.md                            # Configuration guide
 │   ├── copilot-enterprise-settings.json     # Full MCP server configuration
@@ -77,8 +78,8 @@ The Azure MCP Server exposes tools organized by namespace. Configure which names
 | Log Analytics Workspace | ✅ | ✅ | ✅ |
 | Azure DevOps Organization + Project | ✅ | ✅ | ✅ |
 | Cosmos DB Account | | | ✅ |
-| Azure OpenAI Deployment | | ✅ (for real SK agents) | |
-| Enterprise MCP Tenant Registration | | ✅ | |
+| Azure OpenAI Deployment | | ✅ (for real SK agents) | ✅ (for real SK agents) |
+| Enterprise MCP Tenant Registration | | ✅ | ✅ |
 
 > **Mock mode**: All setup scripts support `USE_MOCK_DATA=true` (the default) which requires **no Azure credentials**. This is ideal for exploring the scenarios locally.
 
@@ -117,7 +118,7 @@ See [configuration/README.md](configuration/README.md) for full details.
 |---|----------|---------|--------------------------|
 | **1** | Automated Incident Response | Single-agent, multi-tool | Azure MCP Server (monitor), Enterprise MCP (Graph) |
 | **3** | Multi-Agent Incident Remediation | **Handoff Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
-| **5** | Development Velocity Analysis | Single-agent, multi-tool | Azure MCP Server (monitor, cosmos, appinsights) |
+| **5** | Development Velocity Analysis | **Sequential Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
 
 ### Quick Start (3 Steps)
 
@@ -137,8 +138,9 @@ python demos/setup_scenario_1.py
 python demos/setup_scenario_3.py   # Seeds multi-agent data
 python demos/setup_scenario_5.py
 
-# Run the multi-agent orchestration
-python agents/incident_remediation.py
+# Run multi-agent orchestrations
+python agents/incident_remediation.py   # Scenario 3 — Handoff
+python agents/velocity_analysis.py      # Scenario 5 — Sequential
 ```
 
 See the full setup guide and prompt catalog in [demos/README.md](demos/README.md).
@@ -154,6 +156,18 @@ TriageAgent → DiagnosticsAgent → RemediationAgent
 Each agent has its own system prompt, tool access, and domain expertise. Agents dynamically decide when to hand off to the next specialist. This uses the **Microsoft Agent Framework** patterns documented in the [Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns).
 
 See [agents/README.md](agents/README.md) for the full multi-agent architecture.
+
+### Scenario 5: Sequential Pipeline (Agent-to-Agent)
+
+Scenario 5 demonstrates the **Semantic Kernel Sequential Orchestration** pattern — a different pattern from Scenario 3's Handoff — where three agents form a fixed data pipeline:
+
+```
+MetricsCollectorAgent → TrendAnalystAgent → AdvisorAgent
+```
+
+The MetricsCollectorAgent gathers data from Azure DevOps, Azure Monitor, and Cosmos DB. The TrendAnalystAgent performs statistical analysis and anomaly detection. The AdvisorAgent generates an executive summary with prioritized recommendations and assigns owners via Enterprise MCP (Microsoft Graph).
+
+See [agents/README.md](agents/README.md) for the comparison of Handoff vs. Sequential patterns.
 
 ### Running a Real Demo
 
@@ -172,7 +186,7 @@ The [prompts/getting-started.md](prompts/getting-started.md) file contains natur
 
 - 🚨 **Incident Response** (Scenario 1) — Alert triage, log correlation, ticket creation
 - 🤖 **Multi-Agent Handoff** (Scenario 3) — Agent-to-agent collaboration for end-to-end incident remediation
-- 📊 **Velocity Analytics** (Scenario 5) — Sprint metrics, build health, trend forecasting
+- 📊 **Velocity Analytics** (Scenario 5) — Multi-agent sequential pipeline: data collection, trend analysis, recommendations
 - 🔄 **Cross-Scenario** — Correlating incidents with velocity impact
 
 ## Microsoft Frameworks Used
@@ -195,7 +209,7 @@ This repo is the Microsoft counterpart to [rominirani/google-mcp-servers](https:
 | Monitoring | Azure Monitor / App Insights / Log Analytics | Cloud Logging / Cloud Monitoring |
 | Identity | Enterprise MCP (Graph / Entra ID) | — |
 | Database | Cosmos DB (via Azure MCP) | Firestore, BigQuery |
-| Multi-Agent | Semantic Kernel Handoff Orchestration | — |
+| Multi-Agent | Semantic Kernel Handoff + Sequential Orchestration | — |
 | Auth | Entra ID / Azure Identity / RBAC | Google Credentials / API Keys |
 
 ## Contributing

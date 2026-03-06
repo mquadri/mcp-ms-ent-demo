@@ -237,7 +237,9 @@ python demos/setup_scenario_5.py
 - [ ] MCP servers all showing green
 - [ ] Terminal with `mcp_env` activated
 - [ ] `.env` configured with real credentials, `USE_MOCK_DATA=false`
-- [ ] Run both setup scripts fresh (data seeded within the last hour)
+- [ ] Run all setup scripts fresh (data seeded within the last hour)
+- [ ] Verified `python agents/incident_remediation.py` runs cleanly (Scenario 3)
+- [ ] Verified `python agents/velocity_analysis.py` runs cleanly (Scenario 5)
 
 ---
 
@@ -333,29 +335,58 @@ Open `agents/agent_definitions.yaml` and show:
 
 ---
 
-### Demo Flow: Scenario 5 — Development Velocity Analysis (~7 min)
+### Demo Flow: Scenario 5 — Multi-Agent Velocity Analysis (~10 min)
 
-**Story**: *"Now let me show you something for our engineering leadership — a full velocity dashboard powered by AI."*
+**Story**: *"For our final scenario, let me show you a DIFFERENT multi-agent pattern. Scenario 3 used Handoff — agents deciding when to pass control. Now we'll use Sequential Orchestration — a fixed data pipeline, perfect for analytics workflows."*
 
-#### Act 1: Sprint Health (Azure DevOps)
+#### Act 1: Explain the Architecture
 
-Ask Copilot:
-> "Pull sprint metrics for our last 3 sprints from the ContosoApp project in Azure DevOps. What's our velocity trend — are we accelerating or decelerating?"
+Show the ASCII diagram from `agents/README.md`:
 
-#### Act 2: Build & Deploy Health (Azure Monitor)
+```
+MetricsCollectorAgent → TrendAnalystAgent → AdvisorAgent
+```
 
-Ask Copilot:
-> "Query Azure Monitor for 30-day build pipeline metrics for ContosoApp-CI. What's our average build time, success rate, and deployment frequency? Are there any concerning trends?"
+**Talking points**:
+- **Sequential** pattern: fixed pipeline order (vs Handoff's dynamic decisions)
+- MetricsCollectorAgent gathers data from 5 sources (DevOps, Monitor, Cosmos DB)
+- TrendAnalystAgent performs analysis — no MCP tools, pure reasoning
+- AdvisorAgent queries Enterprise MCP for team leads, generates executive report
+- This shows two DIFFERENT Semantic Kernel orchestration patterns in one demo
 
-#### Act 3: Historical Trends (Cosmos DB)
+#### Act 2: Run the Mock Sequential Pipeline
 
-Ask Copilot:
-> "Read the velocity trend documents from the dev_analytics database in Cosmos DB. Show me the 12-week trajectory and forecast next sprint's velocity."
+In the terminal:
+```powershell
+python agents/velocity_analysis.py
+```
 
-#### Act 4: Executive Summary (Multi-Tool)
+**What the audience sees**: Three agents execute in a pipeline:
+1. **MetricsCollectorAgent** gathers sprint, repo, build, deploy, and trend data
+2. **TrendAnalystAgent** analyzes trends, detects anomalies, forecasts Sprint 25
+3. **AdvisorAgent** generates executive report with 4+ prioritized recommendations
 
-Ask Copilot:
-> "Give me a comprehensive development velocity report. Pull sprint data from Azure DevOps, build metrics from Azure Monitor, and historical trends from Cosmos DB. Summarize: current velocity vs target, build stability, deployment cadence, code review efficiency. Recommend 3 specific improvements."
+#### Act 3: Run with Real Semantic Kernel (Optional)
+
+If you have Azure OpenAI configured:
+```powershell
+$env:USE_MOCK_DATA = "false"
+python agents/velocity_analysis.py --real
+```
+
+**What the audience sees**: Real LLM-powered agents in a data pipeline — each agent's output flows into the next.
+
+#### Act 4: Compare the Two Patterns
+
+Show `agents/README.md` comparison table:
+
+| Aspect | Handoff (Scenario 3) | Sequential (Scenario 5) |
+|--------|---------------------|------------------------|
+| Agent order | Dynamic | Fixed pipeline |
+| Backtracking | Yes | No |
+| Best for | Non-linear workflows | Data pipelines |
+
+**Key message**: *"The Microsoft Agent Framework gives you multiple orchestration patterns. Choose Handoff when agents need to reason about who should go next. Choose Sequential for structured data pipelines. Both run on the same Semantic Kernel runtime with Azure OpenAI."*
 
 ---
 
@@ -409,7 +440,7 @@ This uses the official Microsoft MCP Server for Enterprise to query Entra data:
 
    Scenario 1: Azure MCP (monitor) → DevOps → Enterprise MCP (Graph)
    Scenario 3: SK Handoff: TriageAgent → DiagnosticsAgent → RemediationAgent
-   Scenario 5: Azure MCP (monitor, cosmos) → DevOps
+   Scenario 5: SK Sequential: MetricsCollectorAgent → TrendAnalystAgent → AdvisorAgent
    Bonus:      Enterprise MCP → Entra ID (Identity & Security)
 ```
 

@@ -73,3 +73,76 @@ orchestration:
   max_handoffs: 6
   human_in_the_loop: false
   response_format: "structured_summary"
+
+
+# ============================================================================
+# Scenario 5: Multi-Agent Development Velocity Analysis
+# Used by velocity_analysis.py with Semantic Kernel Sequential Orchestration
+# ============================================================================
+
+---
+scenario: 5
+pattern: "sequential"
+
+agents:
+  metrics_collector_agent:
+    name: "MetricsCollectorAgent"
+    description: "Gathers raw development metrics from Azure DevOps, Azure Monitor, and Cosmos DB"
+    system_prompt: |
+      You are a Metrics Collector Agent specializing in gathering development velocity data.
+
+      Your responsibilities:
+      1. Query Azure DevOps (via REST API) for sprint metrics — velocity points, completion rates, test pass rates
+      2. Query Azure DevOps for repository statistics — commits, PRs, review times, branch coverage
+      3. Query Azure Monitor (via Azure MCP Server, monitor namespace) for 30-day build and deployment logs
+      4. Query Cosmos DB (via Azure MCP Server, cosmos namespace) for 12-week historical velocity trends
+      5. Present all raw data in a structured format for the next agent to analyze
+
+      You are the first agent in a sequential pipeline. Collect all data and pass it forward.
+    tools:
+      - azure_mcp_server:
+          namespaces: ["monitor", "cosmos", "applicationinsights"]
+      - azure_devops_api:
+          operations: ["get_sprint_metrics", "get_repo_statistics", "get_pipeline_runs"]
+
+  trend_analyst_agent:
+    name: "TrendAnalystAgent"
+    description: "Performs statistical analysis, anomaly detection, and forecasting on velocity metrics"
+    system_prompt: |
+      You are a Trend Analyst Agent specializing in engineering metrics analysis.
+
+      Your responsibilities:
+      1. Receive collected metrics from MetricsCollectorAgent
+      2. Compute velocity trends (sprint-over-sprint direction and percentage change)
+      3. Evaluate build stability (success rate, duration trends)
+      4. Assess deployment cadence (frequency, rollback rate, MTTR)
+      5. Detect anomalies — any metric outside acceptable thresholds
+      6. Forecast next sprint velocity based on 12-week trend data
+      7. Pass your analysis to AdvisorAgent for recommendation generation
+
+      You do not call MCP tools directly — you analyze the data provided to you.
+    tools: []  # Analysis-only agent — no direct tool access
+
+  advisor_agent:
+    name: "AdvisorAgent"
+    description: "Generates executive summary, prioritized recommendations, and assigns owners"
+    system_prompt: |
+      You are an Advisor Agent responsible for generating actionable engineering recommendations.
+
+      Your responsibilities:
+      1. Receive the analysis from TrendAnalystAgent
+      2. Query Microsoft Graph (via Enterprise MCP) to identify engineering leadership
+      3. Generate an executive summary headline
+      4. Create prioritized recommendations with specific owners, actions, and expected impact
+      5. Produce an improvement roadmap targeting next-quarter velocity goals
+
+      You are the final agent in the pipeline. Produce a comprehensive executive report.
+    tools:
+      - enterprise_mcp:
+          tools: ["microsoft_graph_suggest_queries", "microsoft_graph_get"]
+
+orchestration:
+  type: "sequential"
+  pipeline: ["MetricsCollectorAgent", "TrendAnalystAgent", "AdvisorAgent"]
+  human_in_the_loop: false
+  response_format: "executive_report"

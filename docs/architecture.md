@@ -110,31 +110,53 @@ This scenario uses the **Semantic Kernel Handoff Orchestration** pattern. Three 
 4. **DiagnosticsAgent → RemediationAgent** handoff: passes root cause + recommended fix
 5. **RemediationAgent** creates work item, queries Enterprise MCP for on-call engineer, assigns ticket
 
-## Scenario 5: Development Velocity Analysis
+## Scenario 5: Multi-Agent Development Velocity Analysis (Sequential Pattern)
+
+This scenario uses the **Semantic Kernel Sequential Orchestration** pattern — a different pattern from Scenario 3's Handoff. Three agents form a fixed data pipeline.
 
 ```
-User: "Analyze our development velocity over the last 12 weeks"
-  │
-  ├──► Azure DevOps REST API
-  │      └─ get_sprint_metrics()     → Sprint 22, 23, 24 data
-  │      └─ get_repo_statistics()    → Commits, PRs, reviews
-  │
-  ├──► Azure MCP Server (monitor namespace)
-  │      └─ query_log_analytics()    → 30-day build logs
-  │      └─ query_log_analytics()    → 30-day deployment logs
-  │
-  └──► Azure MCP Server (cosmos namespace)
-         └─ query_documents()        → 12-week velocity trends
-         └─ read_document()          → Individual trend analysis
+┌─────────────────────────────────────────────────────────────────┐
+│               Semantic Kernel Runtime                           │
+│            (SequentialOrchestration)                             │
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────────┐    ┌──────────────┐  │
+│  │  Metrics     │───►│   Trend          │───►│   Advisor    │  │
+│  │  Collector   │    │   Analyst         │    │   Agent      │  │
+│  │  Agent       │    │   Agent           │    │              │  │
+│  │              │    │                   │    │  Generates   │  │
+│  │  Gathers     │    │  Analyzes trends, │    │  exec summary│  │
+│  │  5 data      │    │  detects anomaly, │    │  assigns     │  │
+│  │  sources     │    │  forecasts        │    │  owners      │  │
+│  └──────┬───────┘    └───────────────────┘    └──────┬───────┘  │
+│         │                                            │          │
+│  ┌──────▼───────────────────┐                 ┌──────▼───────┐  │
+│  │ Azure MCP Server         │                 │ Enterprise   │  │
+│  │ (monitor, cosmos)        │                 │ MCP (Graph)  │  │
+│  │ + Azure DevOps REST API  │                 └──────────────┘  │
+│  └──────────────────────────┘                                   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Data Flow
+### Sequential Pipeline Flow
 
-1. **Sprint Data**: Azure DevOps provides velocity points, completion rates, test pass rates
-2. **Build Metrics**: Azure MCP Server (monitor) yields build duration, success rate, coverage
-3. **Deployment Metrics**: Deployment frequency, rollback rate, time-to-production
-4. **Historical Trends**: Azure MCP Server (cosmos) reads 12 weeks of trend data
-5. **Analysis**: AI synthesizes all data into recommendations
+1. **MetricsCollectorAgent** gathers data from 5 sources:
+   - Azure DevOps → sprint metrics (velocity, completion, test pass rate)
+   - Azure DevOps → repo statistics (commits, PRs, review times)
+   - Azure MCP Server (monitor) → 30-day build logs
+   - Azure MCP Server (monitor) → 30-day deployment logs
+   - Azure MCP Server (cosmos) → 12-week historical velocity trends
+2. **MetricsCollectorAgent → TrendAnalystAgent**: passes raw data bundle
+3. **TrendAnalystAgent** performs analysis:
+   - Velocity trend (accelerating/decelerating)
+   - Build stability scoring
+   - Deployment cadence and rollback rates
+   - Anomaly detection (thresholds exceeded)
+   - Sprint 25 velocity forecast
+4. **TrendAnalystAgent → AdvisorAgent**: passes analysis + anomalies + forecast
+5. **AdvisorAgent** generates executive report:
+   - Queries Enterprise MCP for engineering leadership
+   - Produces prioritized recommendations with owners
+   - Creates improvement roadmap
 
 ## Authentication
 

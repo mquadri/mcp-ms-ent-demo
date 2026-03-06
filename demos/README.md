@@ -8,7 +8,7 @@ This directory contains end-to-end scenarios demonstrating **official Microsoft 
 |----------|-------|---------|--------------------------|
 | **1** | Automated Incident Response | Single-agent, multi-tool | Azure MCP Server (monitor), Enterprise MCP |
 | **3** | Multi-Agent Incident Remediation | **Handoff Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
-| **5** | Development Velocity Analysis | Single-agent, multi-tool | Azure MCP Server (monitor, cosmos) |
+| **5** | Development Velocity Analysis | **Sequential Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
 
 ---
 
@@ -300,9 +300,11 @@ Total handoffs:  2
 
 ### 5. Migration Performance Validation / Development Velocity Analysis (Ops/Eng)
 
-**Use Case**: The engineering team needs a comprehensive view of development velocity — sprint metrics, build/deployment performance, code review efficiency, and 12-week historical trends — to identify bottlenecks and drive improvements.
+**Use Case**: The engineering team needs a comprehensive view of development velocity — sprint metrics, build/deployment performance, code review efficiency, and 12-week historical trends — to identify bottlenecks and drive improvements. Three specialized agents form a **Sequential Orchestration** pipeline: MetricsCollectorAgent gathers data, TrendAnalystAgent performs analysis and forecasting, and AdvisorAgent generates an executive report with prioritized recommendations.
 
-**MCP Servers**: Azure MCP Server (monitor, cosmos namespaces)
+**Pattern**: Semantic Kernel Sequential Orchestration (different from Scenario 3's Handoff)
+
+**MCP Servers / Frameworks**: Azure MCP Server (monitor, cosmos namespaces), Enterprise MCP (Graph), SK Agent Framework
 
 **Setup**:
 
@@ -314,9 +316,76 @@ This setup script populates data across three services for velocity analysis:
 
 ```bash
 python demos/setup_scenario_5.py
+
+# Run the multi-agent velocity analysis (mock mode)
+python agents/velocity_analysis.py
+
+# Or with real Semantic Kernel + Azure OpenAI
+python agents/velocity_analysis.py --real
 ```
 
-**Expected Output**:
+**Expected Output (Multi-Agent)**:
+```
+╔══════════════════════════════════════════════════════════════════════╗
+║  SCENARIO 5: MULTI-AGENT DEVELOPMENT VELOCITY ANALYSIS             ║
+║  Pattern: Semantic Kernel Sequential Orchestration                  ║
+╚══════════════════════════════════════════════════════════════════════╝
+Mode: MOCK DATA
+
+======================================================================
+📥 METRICS COLLECTOR AGENT — Gathering Data
+======================================================================
+📊 Querying Azure DevOps → Sprint metrics...
+   ✓ Sprint 24: 156/160 pts, 90.5% complete
+   ✓ Sprint 23: 152/155 pts, 95.0% complete
+   ✓ Sprint 22: 148/150 pts, 94.7% complete
+
+📈 Querying Azure DevOps → Repository statistics...
+   ✓ Commits/day: 42, PRs merged/day: 8
+
+🔨 Querying Azure MCP Server → monitor namespace (build logs)...
+   ✓ 118 builds, 84.7% success rate
+
+🚀 Querying Azure MCP Server → monitor namespace (deployment logs)...
+   ✓ 58 deployments, 28 to production
+
+📊 Querying Azure MCP Server → cosmos namespace (12-week trends)...
+   ✓ Retrieved 12 weekly trend documents
+
+➡️  Passing to TrendAnalystAgent
+
+======================================================================
+📊 TREND ANALYST AGENT — Analyzing Metrics
+======================================================================
+📈 Velocity Trend: 148 → 156 pts (+5.4% — Accelerating)
+🔨 Build Stability: 84.7% — 🟡 Needs Attention
+🚀 Deployment Cadence: 0.9 deploys/day, 8.6% rollback rate
+⚠️  Anomalies: 2 detected
+🔮 Sprint 25 Forecast: 160 pts
+
+➡️  Passing to AdvisorAgent
+
+======================================================================
+💡 ADVISOR AGENT — Generating Recommendations
+======================================================================
+👥 Querying Enterprise MCP → engineering leadership...
+📋 Generated 4 Recommendations
+
+📊 EXECUTIVE VELOCITY REPORT
+   Velocity: Accelerating (+5.4%)
+   Build Health: 🟡 Needs Attention
+   Deploy Rate: 0.9 deploys/day
+   Forecast: Sprint 25 → 160 pts
+   Actions: 4 recommendations generated
+
+======================================================================
+✅ SCENARIO 5 — MULTI-AGENT VELOCITY ANALYSIS COMPLETE
+======================================================================
+Agents: MetricsCollectorAgent → TrendAnalystAgent → AdvisorAgent
+Pattern: Sequential Orchestration (Semantic Kernel)
+```
+
+**Data Setup Expected Output**:
 ```
 ======================================================================
 📊 SCENARIO 5: DEVELOPMENT VELOCITY ANALYSIS - SETUP
@@ -366,7 +435,9 @@ Mode: MOCK DATA
 > "Read the velocity trend documents from Cosmos DB (dev_analytics / velocity_metrics). Plot the 12-week trajectory and forecast next sprint's expected velocity."
 
 > "Build me a comprehensive development velocity report combining sprint data from DevOps, build metrics from Azure Monitor, and historical trends from Cosmos DB. Recommend 3 actions to improve throughput."
+**Multi-Agent Prompts (for real SK mode)**:
 
+> "Run the multi-agent velocity analysis pipeline. Have MetricsCollectorAgent gather sprint, build, deployment, and trend data. Then TrendAnalystAgent should analyze trends, detect anomalies, and forecast next sprint. Finally, AdvisorAgent should generate an executive report with prioritized recommendations and assigned owners."
 ---
 
 ## Mock Data Generator

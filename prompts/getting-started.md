@@ -135,7 +135,33 @@ exercises and any data prerequisites.
 
 ---
 
-### Prompt 11 — Full Velocity Dashboard
+### Prompt 11 — Multi-Agent Velocity Analysis Pipeline
+
+**Framework**: Semantic Kernel Sequential Orchestration  
+**Prerequisites**: Run `python demos/setup_scenario_5.py`
+
+> "Run the multi-agent velocity analysis pipeline. Have the MetricsCollectorAgent
+> gather sprint data from Azure DevOps, build/deployment logs from Azure Monitor,
+> and 12-week trends from Cosmos DB. Pass the data to TrendAnalystAgent for
+> trend analysis, anomaly detection, and forecasting. Finally, have AdvisorAgent
+> generate an executive report with prioritized recommendations and assigned
+> engineering owners."
+
+---
+
+### Prompt 12 — Sequential vs. Handoff Comparison
+
+**Framework**: Semantic Kernel Sequential Orchestration  
+**Prerequisites**: Run `python demos/setup_scenario_5.py`
+
+> "Demonstrate the Sequential orchestration pattern by running MetricsCollectorAgent,
+> TrendAnalystAgent, and AdvisorAgent in a fixed pipeline. Compare this approach
+> with the Handoff pattern from Scenario 3 — explain why a fixed pipeline works
+> better for data analytics workflows."
+
+---
+
+### Prompt 13 — Full Velocity Dashboard
 
 **MCP Servers**: Azure MCP Server (monitor, cosmos namespaces), Azure DevOps  
 **Prerequisites**: Run `python demos/setup_scenario_5.py`
@@ -148,7 +174,9 @@ exercises and any data prerequisites.
 
 ---
 
-### Prompt 12 — Cross-Scenario: Incident Impact on Velocity
+## Cross-Scenario
+
+### Prompt 14 — Incident Impact on Velocity
 
 **MCP Servers**: Azure MCP Server (monitor, cosmos namespaces), Azure DevOps  
 **Prerequisites**: Run both `setup_scenario_1.py` and `setup_scenario_5.py`
