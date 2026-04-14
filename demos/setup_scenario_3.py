@@ -7,8 +7,7 @@ for demonstrating the Handoff pattern with Semantic Kernel.
 
 import json
 import os
-import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 USE_MOCK_DATA = os.getenv("USE_MOCK_DATA", "true").lower() == "true"
 
@@ -24,7 +23,7 @@ ALERTS = [
         "Message": "Database connection timeout - unable to process orders",
         "AffectedResources": ["sql-checkout-db", "app-checkout-01", "app-checkout-02"],
         "ErrorCode": "CONN_TIMEOUT_5000",
-        "Timestamp": (datetime.utcnow() - timedelta(minutes=15)).isoformat(),
+        "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=15)).isoformat(),
         "IncidentCount": 342,
     },
     {
@@ -34,7 +33,7 @@ ALERTS = [
         "Message": "Payment processor API returning 503 errors",
         "AffectedResources": ["payment-gateway-01", "payment-gateway-02"],
         "ErrorCode": "EXT_API_ERROR_503",
-        "Timestamp": (datetime.utcnow() - timedelta(minutes=12)).isoformat(),
+        "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=12)).isoformat(),
         "IncidentCount": 127,
     },
     {
@@ -44,7 +43,7 @@ ALERTS = [
         "Message": "Email queue backing up - 50K+ undelivered messages",
         "AffectedResources": ["queue-notifications", "email-service-01"],
         "ErrorCode": "QUEUE_OVERFLOW",
-        "Timestamp": (datetime.utcnow() - timedelta(minutes=8)).isoformat(),
+        "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=8)).isoformat(),
         "IncidentCount": 89,
     },
 ]
@@ -60,7 +59,7 @@ ERROR_LOGS = [
             "  at SqlClient.ExecuteQuery (line 156)"
         ),
         "request_id": "req-9921-8839",
-        "timestamp": (datetime.utcnow() - timedelta(minutes=14)).isoformat(),
+        "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=14)).isoformat(),
     },
     {
         "level": "ERROR",
@@ -68,7 +67,7 @@ ERROR_LOGS = [
         "message": "External API unreachable: Stripe gateway returns 503",
         "error_code": "STRIPE_503",
         "request_id": "req-9921-8840",
-        "timestamp": (datetime.utcnow() - timedelta(minutes=11)).isoformat(),
+        "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=11)).isoformat(),
     },
     {
         "level": "ERROR",
@@ -76,15 +75,33 @@ ERROR_LOGS = [
         "message": "Connection pool exhausted, unable to allocate new connection",
         "error_code": "CONN_POOL_EXHAUSTED",
         "request_id": "req-9921-8841",
-        "timestamp": (datetime.utcnow() - timedelta(minutes=10)).isoformat(),
+        "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat(),
     },
 ]
 
 ONCALL_ENGINEER = {
-    "displayName": "Ahmed Hassan",
-    "mail": "ahmed.hassan@contoso.com",
+    "displayName": "System Administrator",
+    "mail": "admin@MngEnv399036.onmicrosoft.com",
     "jobTitle": "Senior Platform Engineer",
     "team": "Platform Engineering",
+}
+
+# Real ADO work item references (mcp-demo project)
+ADO_ORG = "mquadri-msmenv"
+ADO_PROJECT = "mcp-demo"
+ADO_WORKITEM = {
+    "id": 1,
+    "title": "CRITICAL: CheckoutService DB Connection Timeout - Sev1 Incident",
+    "url": f"https://dev.azure.com/{ADO_ORG}/{ADO_PROJECT}/_workitems/edit/1",
+    "state": "To Do",
+    "type": "Issue",
+    "childTasks": [
+        {"id": 5, "title": "Increase DB connection pool max size from 50 to 200"},
+        {"id": 6, "title": "Add circuit breaker on DB retry path"},
+        {"id": 4, "title": "Enable auto-scale on app-checkout-01/02"},
+        {"id": 2, "title": "PaymentGateway: Investigate Stripe 503 errors"},
+        {"id": 3, "title": "Post-incident review: CheckoutService Sev1 outage"},
+    ],
 }
 
 AGENT_HANDOFF_LOG = [
@@ -105,7 +122,10 @@ AGENT_HANDOFF_LOG = [
     {
         "step": 3,
         "agent": "RemediationAgent",
-        "action": "Created Bug #54321, assigned to Ahmed Hassan, proposed 3-step fix",
+        "action": (
+            f"Created Issue #{ADO_WORKITEM['id']}, "
+            f"assigned to {ONCALL_ENGINEER['displayName']}, proposed 3-step fix"
+        ),
         "handoff_to": None,
         "duration_ms": 1800,
     },
@@ -148,7 +168,10 @@ def main():
         "error_logs": ERROR_LOGS,
         "oncall_engineer": ONCALL_ENGINEER,
         "agent_handoff_log": AGENT_HANDOFF_LOG,
-        "generated_at": datetime.utcnow().isoformat(),
+        "ado_workitem": ADO_WORKITEM,
+        "ado_org": ADO_ORG,
+        "ado_project": ADO_PROJECT,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
     with open(output_file, "w", encoding="utf-8") as f:

@@ -27,7 +27,7 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 # ---------------------------------------------------------------------------
@@ -41,8 +41,8 @@ USE_MOCK_DATA = os.getenv("USE_MOCK_DATA", "true").lower() == "true"
 
 MOCK_SPRINT_METRICS = {
     "Sprint 24": {
-        "start_date": (datetime.utcnow() - timedelta(days=14)).isoformat(),
-        "end_date": datetime.utcnow().isoformat(),
+        "start_date": (datetime.now(timezone.utc) - timedelta(days=14)).isoformat(),
+        "end_date": datetime.now(timezone.utc).isoformat(),
         "total_work_items": 42,
         "completed": 38,
         "in_progress": 3,
@@ -54,8 +54,8 @@ MOCK_SPRINT_METRICS = {
         "test_pass_rate": 96.2,
     },
     "Sprint 23": {
-        "start_date": (datetime.utcnow() - timedelta(days=28)).isoformat(),
-        "end_date": (datetime.utcnow() - timedelta(days=14)).isoformat(),
+        "start_date": (datetime.now(timezone.utc) - timedelta(days=28)).isoformat(),
+        "end_date": (datetime.now(timezone.utc) - timedelta(days=14)).isoformat(),
         "total_work_items": 40,
         "completed": 38,
         "velocity_points": 152,
@@ -65,8 +65,8 @@ MOCK_SPRINT_METRICS = {
         "test_pass_rate": 97.8,
     },
     "Sprint 22": {
-        "start_date": (datetime.utcnow() - timedelta(days=42)).isoformat(),
-        "end_date": (datetime.utcnow() - timedelta(days=28)).isoformat(),
+        "start_date": (datetime.now(timezone.utc) - timedelta(days=42)).isoformat(),
+        "end_date": (datetime.now(timezone.utc) - timedelta(days=28)).isoformat(),
         "total_work_items": 38,
         "completed": 36,
         "velocity_points": 148,

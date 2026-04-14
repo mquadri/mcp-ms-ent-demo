@@ -25,7 +25,7 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 # ---------------------------------------------------------------------------
@@ -45,7 +45,7 @@ MOCK_ALERTS = [
         "Message": "Database connection timeout - unable to process orders",
         "AffectedResources": ["sql-checkout-db", "app-checkout-01", "app-checkout-02"],
         "ErrorCode": "CONN_TIMEOUT_5000",
-        "Timestamp": (datetime.utcnow() - timedelta(minutes=15)).isoformat(),
+        "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=15)).isoformat(),
         "IncidentCount": 342,
     },
     {
@@ -55,7 +55,7 @@ MOCK_ALERTS = [
         "Message": "Payment processor API returning 503 errors",
         "AffectedResources": ["payment-gateway-01", "payment-gateway-02"],
         "ErrorCode": "EXT_API_ERROR_503",
-        "Timestamp": (datetime.utcnow() - timedelta(minutes=12)).isoformat(),
+        "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=12)).isoformat(),
         "IncidentCount": 127,
     },
 ]
@@ -71,7 +71,7 @@ MOCK_LOGS = [
             "  at SqlClient.ExecuteQuery (line 156)"
         ),
         "request_id": "req-9921-8839",
-        "timestamp": (datetime.utcnow() - timedelta(minutes=14)).isoformat(),
+        "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=14)).isoformat(),
     },
     {
         "level": "ERROR",
@@ -79,23 +79,34 @@ MOCK_LOGS = [
         "message": "External API unreachable: Stripe gateway returns 503",
         "error_code": "STRIPE_503",
         "request_id": "req-9921-8840",
-        "timestamp": (datetime.utcnow() - timedelta(minutes=11)).isoformat(),
+        "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=11)).isoformat(),
     },
 ]
 
 MOCK_ONCALL = {
-    "displayName": "Ahmed Hassan",
-    "mail": "ahmed.hassan@contoso.com",
+    "displayName": "System Administrator",
+    "mail": "admin@MngEnv399036.onmicrosoft.com",
     "jobTitle": "Senior Platform Engineer",
     "team": "Platform Engineering",
 }
 
+ADO_ORG = "mquadri-msmenv"
+ADO_PROJECT = "mcp-demo"
+
 MOCK_WORKITEM = {
-    "id": 54321,
-    "title": "CRITICAL: CheckoutService DB Connection Timeout — Multi-Agent Response",
-    "url": "https://dev.azure.com/contoso-org/ContosoApp/_workitems/edit/54321",
-    "state": "New",
-    "assignedTo": "ahmed.hassan@contoso.com",
+    "id": 1,
+    "title": "CRITICAL: CheckoutService DB Connection Timeout - Sev1 Incident",
+    "url": f"https://dev.azure.com/{ADO_ORG}/{ADO_PROJECT}/_workitems/edit/1",
+    "state": "To Do",
+    "type": "Issue",
+    "assignedTo": "admin@MngEnv399036.onmicrosoft.com",
+    "childTasks": [
+        {"id": 5, "title": "Increase DB connection pool max size from 50 to 200"},
+        {"id": 6, "title": "Add circuit breaker on DB retry path"},
+        {"id": 4, "title": "Enable auto-scale on app-checkout-01/02"},
+        {"id": 2, "title": "PaymentGateway: Investigate Stripe 503 errors"},
+        {"id": 3, "title": "Post-incident review: CheckoutService Sev1 outage"},
+    ],
 }
 
 
@@ -197,11 +208,16 @@ def remediation_agent(diagnostics_result: dict[str, Any]) -> dict[str, Any]:
     print("=" * 70)
     print(f"Root cause: {diagnostics_result['root_cause']}\n")
 
-    # Step 1: Create work item (Azure DevOps REST API)
-    print("📋 Creating work item in Azure DevOps...")
+    # Step 1: Reference real ADO work item (created during setup)
+    print("📋 Referencing Issue in Azure DevOps (mcp-demo)...")
     wi = MOCK_WORKITEM
-    print(f"   ✓ Created Bug #{wi['id']}: {wi['title']}")
+    print(f"   ✓ Issue #{wi['id']}: {wi['title']}")
     print(f"   ✓ URL: {wi['url']}")
+    print(f"   ✓ State: {wi['state']}  |  Type: {wi.get('type', 'Issue')}")
+    if wi.get("childTasks"):
+        print(f"   ✓ Linked tasks: {len(wi['childTasks'])}")
+        for task in wi["childTasks"]:
+            print(f"       • Task #{task['id']}: {task['title']}")
 
     # Step 2: Find on-call engineer (Enterprise MCP → Microsoft Graph)
     print("\n👤 Querying Enterprise MCP → microsoft_graph_get...")
@@ -210,7 +226,7 @@ def remediation_agent(diagnostics_result: dict[str, Any]) -> dict[str, Any]:
     print(f"   ✓ Role: {oc['jobTitle']}, Team: {oc['team']}")
 
     # Step 3: Assign work item
-    print(f"\n✅ Assigning Bug #{wi['id']} to {oc['displayName']}...")
+    print(f"\n✅ Assigning Issue #{wi['id']} to {oc['displayName']}...")
     print(f"   ✓ Work item assigned to {oc['mail']}")
 
     summary = {
@@ -232,9 +248,10 @@ def remediation_agent(diagnostics_result: dict[str, Any]) -> dict[str, Any]:
     print("=" * 70)
     print(f"Severity:    {summary['severity']}")
     print(f"Root Cause:  {summary['root_cause']}")
-    print(f"Work Item:   Bug #{wi['id']} — {wi['title']}")
+    print(f"Work Item:   Issue #{wi['id']} — {wi['title']}")
     print(f"Assigned To: {oc['displayName']} ({oc['mail']})")
     print(f"Status:      {wi['state']}")
+    print(f"ADO URL:     {wi['url']}")
     print("\nNext Steps:")
     for i, step in enumerate(summary["next_steps"], 1):
         print(f"   {i}. {step}")
@@ -276,7 +293,7 @@ def run_handoff_orchestration(incident: str) -> dict[str, Any]:
     print("=" * 70)
     print("Agents involved: TriageAgent → DiagnosticsAgent → RemediationAgent")
     print(f"Total handoffs:  2")
-    print(f"Outcome:         Bug #{final_result['work_item']['id']} assigned to "
+    print(f"Outcome:         Issue #{final_result['work_item']['id']} assigned to "
           f"{final_result['assigned_to']['displayName']}")
     print("=" * 70)
 
