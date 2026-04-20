@@ -84,8 +84,8 @@ MOCK_LOGS = [
 ]
 
 MOCK_ONCALL = {
-    "displayName": "System Administrator",
-    "mail": "admin@MngEnv399036.onmicrosoft.com",
+    "displayName": "Ahmed Hassan",
+    "mail": "ahmed.hassan@contoso.com",
     "jobTitle": "Senior Platform Engineer",
     "team": "Platform Engineering",
 }

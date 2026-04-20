@@ -23,3 +23,5 @@ mock_data_*.json
 # OS
 .DS_Store
 Thumbs.db
+
+.vscode/
