@@ -51,11 +51,22 @@ $RequiredServices = @(
 )
 
 $RequiredSoftware = @(
-    # DisplayName supports wildcards.
-    # Examples:
-    # @{ DisplayName = "Microsoft Edge*" },
-    # @{ DisplayName = "Microsoft Teams*" },
-    # @{ DisplayName = "Microsoft 365 Apps*" }
+    # DisplayName supports wildcards. VersionRule can be "Minimum" or "Exact".
+    @{ DisplayName = "Adobe Acrobat*"; RequiredVersion = "25.001.21111"; Publisher = "Adobe"; VersionRule = "Minimum" },
+    @{ DisplayName = "Beyond Compare*"; RequiredVersion = "4.4.7.28397"; Publisher = "Scooter Software"; VersionRule = "Minimum"; LicenseRequirement = "Enterprise license required" },
+    @{ DisplayName = "Git"; RequiredVersion = "2.49.0"; Publisher = "The Git Development Community"; VersionRule = "Minimum" },
+    @{ DisplayName = "GitHub CLI"; RequiredVersion = "2.20.2"; Publisher = "GitHub Inc"; VersionRule = "Minimum" },
+    @{ DisplayName = "Microsoft 365 Apps for enterprise - en-us"; RequiredVersion = "16.0.19530.20184"; Publisher = "Microsoft Corporation"; VersionRule = "Minimum" },
+    @{ DisplayName = "Microsoft Visual Studio Code*"; RequiredVersion = "1.106.0"; Publisher = "Microsoft Corporation"; VersionRule = "Minimum" },
+    @{ DisplayName = "Microsoft Visual Studio Tools for Applications 2019"; RequiredVersion = "16.0.31110"; Publisher = "Microsoft Corporation"; VersionRule = "Minimum" },
+    @{ DisplayName = "Microsoft Visual Studio Tools for Applications 2019 x64 Hosting Support"; RequiredVersion = "16.0.31110"; Publisher = "Microsoft Corporation"; VersionRule = "Minimum" },
+    @{ DisplayName = "Microsoft Visual Studio Tools for Applications 2019 x86 Hosting Support"; RequiredVersion = "16.0.31110"; Publisher = "Microsoft Corporation"; VersionRule = "Minimum" },
+    @{ DisplayName = "Visual Studio Professional 2022"; RequiredVersion = "17.14.0"; Publisher = "Microsoft Corporation"; VersionRule = "Minimum"; LicenseRequirement = "Enterprise license required" },
+    @{ DisplayName = "Neo4j Desktop*"; RequiredVersion = "2.0.4"; Publisher = "Neo4j Inc."; VersionRule = "Minimum" },
+    @{ DisplayName = "Node.js"; RequiredVersion = "22.17.1"; Publisher = "Node.js Foundation"; VersionRule = "Minimum" },
+    @{ DisplayName = "PowerShell 7*"; RequiredVersion = "7.5.4.0"; Publisher = "Microsoft Corporation"; VersionRule = "Minimum" },
+    @{ DisplayName = "Python Launcher"; RequiredVersion = "3.12.4150.0"; Publisher = "Python Software Foundation"; VersionRule = "Minimum" },
+    @{ DisplayName = "Notepad++*"; RequiredVersion = "8.9"; Publisher = "Notepad++ Team"; VersionRule = "Minimum" }
 )
 
 $RequiredEnvironmentVariables = @(
@@ -163,6 +174,64 @@ function Get-InstalledPrograms {
             } |
             Select-Object DisplayName, DisplayVersion, Publisher, InstallDate
     }
+}
+
+function ConvertTo-ComparableVersion {
+    param([string]$VersionText)
+
+    if ([string]::IsNullOrWhiteSpace($VersionText)) {
+        return $null
+    }
+
+    $match = [regex]::Match($VersionText, "\d+(\.\d+){0,3}")
+    if (-not $match.Success) {
+        return $null
+    }
+
+    try {
+        return [version]$match.Value
+    }
+    catch {
+        return $null
+    }
+}
+
+function Test-SoftwareVersion {
+    param(
+        [string]$InstalledVersion,
+        [string]$RequiredVersion,
+        [string]$VersionRule = "Minimum"
+    )
+
+    if ([string]::IsNullOrWhiteSpace($RequiredVersion)) {
+        return [pscustomobject]@{ Passed = $true; Detail = "No required version configured" }
+    }
+
+    $installed = ConvertTo-ComparableVersion -VersionText $InstalledVersion
+    $required = ConvertTo-ComparableVersion -VersionText $RequiredVersion
+
+    if ($null -eq $installed -or $null -eq $required) {
+        return [pscustomobject]@{ Passed = ($InstalledVersion -eq $RequiredVersion); Detail = "Text comparison used" }
+    }
+
+    if ($VersionRule -eq "Exact") {
+        return [pscustomobject]@{ Passed = ($installed -eq $required); Detail = "Installed must equal $RequiredVersion" }
+    }
+
+    return [pscustomobject]@{ Passed = ($installed -ge $required); Detail = "Installed must be >= $RequiredVersion" }
+}
+
+function Get-SoftwareActualText {
+    param([object]$Program)
+
+    if ($null -eq $Program) {
+        return "Not found"
+    }
+
+    $version = if ([string]::IsNullOrWhiteSpace([string]$Program.DisplayVersion)) { "version not reported" } else { $Program.DisplayVersion }
+    $publisher = if ([string]::IsNullOrWhiteSpace([string]$Program.Publisher)) { "publisher not reported" } else { $Program.Publisher }
+
+    return "$($Program.DisplayName) $version; Publisher=$publisher"
 }
 
 function Test-UrlReachability {
@@ -361,14 +430,27 @@ foreach ($serviceRequirement in $RequiredServices) {
 
 $installedPrograms = @(Get-InstalledPrograms)
 foreach ($software in $RequiredSoftware) {
-    Invoke-Check -Category "Software" -Check "Installed software $($software.DisplayName)" -Expected "Installed: $($software.DisplayName)" -ScriptBlock {
-        $match = $installedPrograms | Where-Object { $_.DisplayName -like $software.DisplayName } | Select-Object -First 1
-        ConvertTo-CheckResult -Passed ($null -ne $match) -Actual $(if ($match) { "$($match.DisplayName) $($match.DisplayVersion)" } else { "Not found" }) -Evidence "Uninstall registry"
-    }
-}
+    Invoke-Check -Category "Software" -Check "Installed software $($software.DisplayName)" -Expected "Installed; Version $($software.VersionRule) $($software.RequiredVersion); Publisher=$($software.Publisher)" -ScriptBlock {
+        $matches = @($installedPrograms | Where-Object { $_.DisplayName -like $software.DisplayName })
+        $match = $matches |
+            Sort-Object @{ Expression = { ConvertTo-ComparableVersion -VersionText $_.DisplayVersion }; Descending = $true }, DisplayName |
+            Select-Object -First 1
 
-if ($RequiredSoftware.Count -eq 0) {
-    Add-Result -Category "Software" -Check "Required software list" -Status "Warning" -Expected "Populate RequiredSoftware from prerequisite document" -Actual "No required software configured" -Evidence "CONFIGURATION section"
+        if ($null -eq $match) {
+            return [pscustomobject]@{ Status = "Fail"; Actual = "Not found"; Evidence = "Uninstall registry" }
+        }
+
+        $versionResult = Test-SoftwareVersion -InstalledVersion $match.DisplayVersion -RequiredVersion $software.RequiredVersion -VersionRule $software.VersionRule
+        $publisherMatches = [string]$match.Publisher -like $software.Publisher
+        $passed = $versionResult.Passed -and $publisherMatches
+        $actual = "$(Get-SoftwareActualText -Program $match); VersionCheck=$($versionResult.Detail); PublisherCheck=$publisherMatches"
+
+        ConvertTo-CheckResult -Passed $passed -Actual $actual -Evidence "Uninstall registry"
+    }
+
+    if ($software.ContainsKey("LicenseRequirement")) {
+        Add-Result -Category "Licensing" -Check "License validation $($software.DisplayName)" -Status "Warning" -Expected $software.LicenseRequirement -Actual "Installation can be checked by script; license assignment must be validated in the vendor/admin portal or enterprise licensing records." -Evidence "Manual validation required"
+    }
 }
 
 foreach ($variable in $RequiredEnvironmentVariables) {
