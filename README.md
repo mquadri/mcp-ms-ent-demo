@@ -2,6 +2,8 @@
 
 A collection of resources for working with **official Microsoft MCP Servers** and the **Microsoft Semantic Kernel Agent Framework**. This repository contains configuration files, demo scenarios (including a multi-agent handoff demo), and sample prompts to help you integrate AI agents (GitHub Copilot, VS Code, and other MCP clients) with Microsoft cloud services through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/).
 
+> 🚀 **New to the repo?** Start here: **[QUICK_START_DEMO.md](QUICK_START_DEMO.md)** — Get the demo running in 5 minutes!
+
 ## What are Microsoft Enterprise MCP Servers?
 
 Microsoft provides two official MCP servers that expose Azure and Microsoft 365 services as tools AI agents can call:
