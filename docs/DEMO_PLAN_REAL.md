@@ -20,7 +20,7 @@ Use these companion docs for the 1-hour mixed-audience session:
 
 | Service | URL |
 |---------|-----|
-| Agents MCP | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
+| Agents MCP | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp` |
 | Agents app | `https://agents.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
 | Azure MCP internal | `https://azure-mcp.internal.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
 

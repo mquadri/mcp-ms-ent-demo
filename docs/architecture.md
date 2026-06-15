@@ -17,7 +17,7 @@ The real demo uses Azure Container Apps deployed in East US:
 
 | Service | URL | Purpose |
 |---|---|---|
-| Agent MCP endpoint | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` | MCP-facing endpoint for agent/tool integration |
+| Agent MCP endpoint | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp` | MCP-facing endpoint for agent/tool integration |
 | Agent app endpoint | `https://agents.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` | Agent application endpoint |
 | Azure MCP endpoint | `https://azure-mcp.internal.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` | Internal Azure MCP endpoint inside the Container Apps environment |
 
@@ -110,4 +110,3 @@ For a mixed audience, keep the explanation at two levels:
 
 - Business level: "The agent turns an incident signal into assigned engineering work."
 - Technical level: "The agent selects MCP tools, retrieves real cloud context, and Semantic Kernel coordinates specialist agents."
-
