@@ -8,7 +8,7 @@ Scenario 1: Automated Incident Response
 
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Any
 import sys
 
@@ -50,7 +50,7 @@ def seed_azure_monitor_alerts() -> List[Dict[str, Any]]:
             "Message": "Database connection timeout - unable to process orders",
             "AffectedResources": ["sql-checkout-db", "app-checkout-01", "app-checkout-02"],
             "ErrorCode": "CONN_TIMEOUT_5000",
-            "Timestamp": (datetime.utcnow() - timedelta(minutes=15)).isoformat(),
+            "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=15)).isoformat(),
             "IncidentCount": 342
         },
         {
@@ -60,7 +60,7 @@ def seed_azure_monitor_alerts() -> List[Dict[str, Any]]:
             "Message": "Payment processor API returning 503 errors",
             "AffectedResources": ["payment-gateway-01", "payment-gateway-02"],
             "ErrorCode": "EXT_API_ERROR_503",
-            "Timestamp": (datetime.utcnow() - timedelta(minutes=12)).isoformat(),
+            "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=12)).isoformat(),
             "IncidentCount": 127
         },
         {
@@ -70,7 +70,7 @@ def seed_azure_monitor_alerts() -> List[Dict[str, Any]]:
             "Message": "Email queue backing up - 50K+ undelivered messages",
             "AffectedResources": ["queue-notifications", "email-service-01"],
             "ErrorCode": "QUEUE_OVERFLOW",
-            "Timestamp": (datetime.utcnow() - timedelta(minutes=8)).isoformat(),
+            "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=8)).isoformat(),
             "IncidentCount": 89
         }
     ]
@@ -107,7 +107,7 @@ def seed_application_logs() -> List[Dict[str, Any]]:
             "stack_trace": "at CheckoutService.ProcessOrder (line 234)\n  at PaymentProcessor.Execute (line 156)",
             "request_id": "req-9921-8839",
             "user_id": "user-5502",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=14)).isoformat()
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=14)).isoformat()
         },
         {
             "level": "ERROR",
@@ -116,7 +116,7 @@ def seed_application_logs() -> List[Dict[str, Any]]:
             "error_code": "STRIPE_503",
             "request_id": "req-9921-8840",
             "user_id": "user-5503",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=11)).isoformat()
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=11)).isoformat()
         },
         {
             "level": "ERROR",
@@ -125,7 +125,7 @@ def seed_application_logs() -> List[Dict[str, Any]]:
             "error_code": "CONN_POOL_EXHAUSTED",
             "request_id": "req-9921-8841",
             "user_id": "user-5504",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=10)).isoformat()
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat()
         }
     ]
     

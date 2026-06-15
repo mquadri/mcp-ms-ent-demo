@@ -6,7 +6,7 @@ Generates realistic sample data for testing scenarios without Azure credentials
 
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any
 import random
 import string
@@ -51,7 +51,7 @@ class MockDataGenerator:
                 "Message": random.choice(errors),
                 "AffectedResources": [f"resource-{j}" for j in range(random.randint(1, 3))],
                 "ErrorCode": f"ERR_{random.randint(1000, 9999)}",
-                "Timestamp": (datetime.utcnow() - timedelta(minutes=random.randint(1, 60))).isoformat(),
+                "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=random.randint(1, 60))).isoformat(),
                 "IncidentCount": random.randint(10, 500)
             }
             alerts.append(alert)
@@ -78,7 +78,7 @@ class MockDataGenerator:
                 "message": random.choice(messages),
                 "request_id": f"req-{random.randint(1000, 9999)}-{random.randint(1000, 9999)}",
                 "user_id": f"user-{random.randint(1000, 9999)}",
-                "timestamp": (datetime.utcnow() - timedelta(minutes=random.randint(1, 30))).isoformat()
+                "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=random.randint(1, 30))).isoformat()
             }
             logs.append(log)
         
@@ -89,8 +89,8 @@ class MockDataGenerator:
         """Generate mock sprint metrics"""
         return {
             "Sprint 24": {
-                "start_date": (datetime.utcnow() - timedelta(days=14)).isoformat(),
-                "end_date": datetime.utcnow().isoformat(),
+                "start_date": (datetime.now(timezone.utc) - timedelta(days=14)).isoformat(),
+                "end_date": datetime.now(timezone.utc).isoformat(),
                 "total_work_items": random.randint(35, 50),
                 "completed": random.randint(30, 45),
                 "velocity_points": random.randint(140, 165),
@@ -106,7 +106,7 @@ class MockDataGenerator:
         builds = []
         
         for day in range(days):
-            timestamp = datetime.utcnow() - timedelta(days=day)
+            timestamp = datetime.now(timezone.utc) - timedelta(days=day)
             builds_per_day = random.randint(3, 6)
             
             for i in range(builds_per_day):
@@ -128,7 +128,7 @@ class MockDataGenerator:
         deployments = []
         
         for day in range(days):
-            timestamp = datetime.utcnow() - timedelta(days=day)
+            timestamp = datetime.now(timezone.utc) - timedelta(days=day)
             deploys_per_day = random.randint(1, 3)
             
             for i in range(deploys_per_day):
@@ -165,7 +165,7 @@ def main():
     logs = generator.generate_error_logs(8)
     
     scenario_1_data = {
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "alerts": alerts,
         "logs": logs,
         "ticket_id": generator.generate_ticket_id(),
@@ -188,7 +188,7 @@ def main():
     deployments = generator.generate_deployment_logs(30)
     
     scenario_5_data = {
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "sprints": sprints,
         "builds": builds,
         "deployments": deployments,

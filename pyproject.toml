@@ -1,0 +1,8 @@
+[tool.pycodestyle]
+max-line-length = 120
+
+[tool.flake8]
+max-line-length = 120
+
+[tool.pylint.format]
+max-line-length = 120
