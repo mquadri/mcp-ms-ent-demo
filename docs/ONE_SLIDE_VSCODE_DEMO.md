@@ -1,5 +1,7 @@
 # One-Slide Architecture: VS Code AI Demo with Working Connectors
 
+> The editable architecture source now lives in [architecture.drawio](architecture.drawio). Use this file for slide exports and diagram edits.
+
 ## Slide Title
 
 AI in Action: Incident to Azure DevOps Story Flow in VS Code

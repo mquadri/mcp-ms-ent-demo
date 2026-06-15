@@ -1,4 +1,18 @@
 {
   "inputs": [],
-  "servers": {}
+  "servers": {
+    "demo-agents-mcp": {
+      "type": "http",
+      "url": "https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io"
+    },
+    "microsoft-enterprise-mcp": {
+      "type": "http",
+      "url": "https://mcp.svc.cloud.microsoft/enterprise"
+    },
+    "azure-devops-mquadri": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@azure-devops/mcp", "mquadri-msmenv"]
+    }
+  }
 }

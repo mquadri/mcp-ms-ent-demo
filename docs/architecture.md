@@ -1,172 +1,113 @@
 # System Architecture
 
-## Overview
+This document describes the real Azure + VS Code demo architecture for this repo. The diagrams are maintained as draw.io assets so they can be opened, edited, exported, and reused in slides.
 
-Microsoft Enterprise MCP Servers integrate AI agents with Microsoft cloud services through the Model Context Protocol. This repo uses two official Microsoft MCP servers plus the Semantic Kernel Agent Framework for multi-agent orchestration.
+## Editable Diagrams
 
-### High-Level Architecture
+- [architecture.drawio](architecture.drawio) - editable draw.io source with three pages:
+  - `Real Azure MCP Demo`
+  - `Scenario 3 Handoff`
+  - `Scenario 5 Sequential`
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    AI Agent (GitHub Copilot)                    │
-│                                                                 │
-│   User Prompt ──► Tool Selection ──► Orchestration              │
-└────────────┬────────────────────────────────┬───────────────────┘
-             │                                │
-       MCP Protocol (stdio)           MCP Protocol (HTTP)
-             │                                │
-    ┌────────▼──────────┐          ┌──────────▼───────────────┐
-    │  Azure MCP Server │          │  MS Enterprise MCP Server│
-    │  @azure/mcp       │          │  mcp.svc.cloud.microsoft │
-    │                   │          │  .com/enterprise          │
-    │  Namespaces:      │          │                          │
-    │  • monitor        │          │  Tools:                  │
-    │  • cosmos         │          │  • graph_suggest_queries │
-    │  • appinsights    │          │  • graph_get             │
-    │  • keyvault       │          │  • graph_list_properties │
-    │  • storage        │          └──────────┬───────────────┘
-    │  • appservice     │                     │
-    │  • functionapp    │              ┌──────▼──────┐
-    │  • aks            │              │  Entra ID / │
-    │  • role / deploy  │              │  MS Graph   │
-    │  • + 15 more...   │              │  API        │
-    └────────┬──────────┘              └─────────────┘
-             │
-    ┌────────▼──────────┐
-    │  Azure Services   │
-    │  (via Azure       │
-    │   Identity/RBAC)  │
-    │                   │
-    │  Log Analytics    │
-    │  Cosmos DB        │
-    │  App Insights     │
-    │  Key Vault        │
-    │  Storage          │
-    │  App Service      │
-    │  AKS, etc.        │
-    └───────────────────┘
-```
+To edit the diagrams, open `docs/architecture.drawio` in diagrams.net or the VS Code draw.io extension.
 
-## Scenario 1: Automated Incident Response
+## Deployed Azure Container Apps
 
-Single-agent, multi-tool orchestration. Copilot fans out across Azure MCP Server namespaces and the Enterprise MCP.
+The real demo uses Azure Container Apps deployed in East US:
 
-```
-User: "Fetch critical alerts and create an incident ticket"
-  │
-  ├──► Azure MCP Server (monitor namespace)
-  │      └─ fetch_critical_alerts()  → Returns 3 alerts
-  │      └─ get_error_logs()         → Returns correlated logs
-  │
-  ├──► Azure DevOps REST API (via agent plugin)
-  │      └─ create_work_item()       → Creates Sev1 bug #54321
-  │
-  ├──► Enterprise MCP Server (Microsoft Graph)
-  │      └─ microsoft_graph_get()    → Resolves Platform team
-  │      └─ microsoft_graph_get()    → Returns on-call engineer
-  │
-  └──► Azure DevOps REST API
-         └─ assign_work_item()       → Assigns to Ahmed Hassan
-```
+| Service | URL | Purpose |
+|---|---|---|
+| Agent MCP endpoint | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` | MCP-facing endpoint for agent/tool integration |
+| Agent app endpoint | `https://agents.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` | Agent application endpoint |
+| Azure MCP endpoint | `https://azure-mcp.internal.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` | Internal Azure MCP endpoint inside the Container Apps environment |
 
-### Data Flow
+The Azure Portal screenshot shows the relevant Container Apps in resource group `rg-mcp-agent-stack`, Container Apps environment `mcp-dev-env`, region `East US`:
 
-1. **Alert Detection**: Azure MCP Server → monitor namespace detects critical alerts
-2. **Log Correlation**: Azure MCP Server → monitor/appinsights namespace correlates logs
-3. **Ticket Creation**: Azure DevOps work item created with full incident context
-4. **On-Call Resolution**: Enterprise MCP → Microsoft Graph resolves the on-call engineer
-5. **Assignment**: Work item assigned with notification
+- `agents`
+- `agents-mcp`
+- `azure-mcp`
+- `infra-mcp`
+- `research-mcp`
 
-## Scenario 3: Multi-Agent Incident Remediation (Handoff Pattern)
+## High-Level Flow
 
-This scenario uses the **Semantic Kernel Handoff Orchestration** pattern. Three specialized agents form a chain, each able to hand off context to the next.
+1. Presenter uses VS Code and GitHub Copilot Chat in Agent mode.
+2. Copilot connects to configured MCP endpoints.
+3. The deployed agent/MCP services run in Azure Container Apps.
+4. Azure MCP tools retrieve operational context from Azure services.
+5. Enterprise/Graph tooling resolves users, teams, roles, and ownership.
+6. The agent workflow creates or updates Azure DevOps work items.
+7. Semantic Kernel orchestrates multi-agent handoff and sequential workflows.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                  Semantic Kernel Runtime                        │
-│               (HandoffOrchestration)                            │
-│                                                                 │
-│  ┌──────────────┐    ┌──────────────────┐    ┌──────────────┐  │
-│  │ TriageAgent  │───►│ DiagnosticsAgent │───►│ Remediation  │  │
-│  │              │    │                  │    │ Agent        │  │
-│  │ Classifies   │    │ Root-cause       │    │ Creates WI,  │  │
-│  │ severity,    │    │ analysis via     │    │ finds on-call│  │
-│  │ blast radius │    │ logs & traces    │    │ assigns      │  │
-│  └──────┬───────┘    └────────┬─────────┘    └──────┬───────┘  │
-│         │                     │                     │          │
-│  ┌──────▼───────┐    ┌───────▼──────────┐  ┌───────▼───────┐  │
-│  │ Azure MCP    │    │ Azure MCP        │  │ Enterprise    │  │
-│  │ (monitor)    │    │ (appinsights,    │  │ MCP (Graph)   │  │
-│  │              │    │  monitor, kusto) │  │ + ADO API     │  │
-│  └──────────────┘    └──────────────────┘  └───────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+## Conceptual Layers
+
+| Layer | What the audience should understand | Demo evidence |
+|---|---|---|
+| User experience | The presenter asks for an outcome in natural language | VS Code Copilot Agent mode |
+| Agent reasoning | The agent decomposes the task and selects tools | Copilot tool calls and terminal output |
+| MCP tool layer | MCP standardizes access to enterprise systems | Azure MCP / agent MCP endpoints |
+| Enterprise systems | Azure and Microsoft Graph provide real context | Alerts, logs, users, assignments |
+| Orchestration | Semantic Kernel coordinates specialist agents | `incident_remediation.py`, `velocity_analysis.py` |
+
+## Scenario 1: Single-Agent Incident Response
+
+This flow demonstrates one agent using multiple tools:
+
+1. Query Azure Monitor for active critical alerts.
+2. Correlate logs through Azure MCP.
+3. Create a severity 1 Azure DevOps work item.
+4. Resolve the on-call owner through Graph/Enterprise context.
+5. Assign the work item and summarize the incident.
+
+Use this scenario to explain MCP as the bridge between an AI agent and enterprise tools.
+
+## Scenario 3: Handoff Orchestration
+
+This flow demonstrates Semantic Kernel handoff orchestration:
+
+```text
+TriageAgent -> DiagnosticsAgent -> RemediationAgent
 ```
 
-### Agent Handoff Flow
+Use this scenario to explain specialization:
 
-1. **TriageAgent** receives the incident, queries Azure Monitor for active alerts, classifies severity (Sev1), identifies blast radius
-2. **TriageAgent → DiagnosticsAgent** handoff: passes alert data + classification
-3. **DiagnosticsAgent** queries Application Insights for traces, identifies root cause (DB connection pool exhaustion)
-4. **DiagnosticsAgent → RemediationAgent** handoff: passes root cause + recommended fix
-5. **RemediationAgent** creates work item, queries Enterprise MCP for on-call engineer, assigns ticket
+- `TriageAgent` classifies severity and blast radius.
+- `DiagnosticsAgent` correlates logs and identifies root cause.
+- `RemediationAgent` creates or updates work, resolves owners, and summarizes next steps.
 
-## Scenario 5: Multi-Agent Development Velocity Analysis (Sequential Pattern)
+Handoff orchestration is best for investigative or non-linear workflows where the next best step depends on what the previous agent discovered.
 
-This scenario uses the **Semantic Kernel Sequential Orchestration** pattern — a different pattern from Scenario 3's Handoff. Three agents form a fixed data pipeline.
+## Scenario 5: Sequential Orchestration
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│               Semantic Kernel Runtime                           │
-│            (SequentialOrchestration)                             │
-│                                                                 │
-│  ┌──────────────┐    ┌──────────────────┐    ┌──────────────┐  │
-│  │  Metrics     │───►│   Trend          │───►│   Advisor    │  │
-│  │  Collector   │    │   Analyst         │    │   Agent      │  │
-│  │  Agent       │    │   Agent           │    │              │  │
-│  │              │    │                   │    │  Generates   │  │
-│  │  Gathers     │    │  Analyzes trends, │    │  exec summary│  │
-│  │  5 data      │    │  detects anomaly, │    │  assigns     │  │
-│  │  sources     │    │  forecasts        │    │  owners      │  │
-│  └──────┬───────┘    └───────────────────┘    └──────┬───────┘  │
-│         │                                            │          │
-│  ┌──────▼───────────────────┐                 ┌──────▼───────┐  │
-│  │ Azure MCP Server         │                 │ Enterprise   │  │
-│  │ (monitor, cosmos)        │                 │ MCP (Graph)  │  │
-│  │ + Azure DevOps REST API  │                 └──────────────┘  │
-│  └──────────────────────────┘                                   │
-└─────────────────────────────────────────────────────────────────┘
+This flow demonstrates Semantic Kernel sequential orchestration:
+
+```text
+MetricsCollectorAgent -> TrendAnalystAgent -> AdvisorAgent
 ```
 
-### Sequential Pipeline Flow
+Use this scenario to explain pipelines:
 
-1. **MetricsCollectorAgent** gathers data from 5 sources:
-   - Azure DevOps → sprint metrics (velocity, completion, test pass rate)
-   - Azure DevOps → repo statistics (commits, PRs, review times)
-   - Azure MCP Server (monitor) → 30-day build logs
-   - Azure MCP Server (monitor) → 30-day deployment logs
-   - Azure MCP Server (cosmos) → 12-week historical velocity trends
-2. **MetricsCollectorAgent → TrendAnalystAgent**: passes raw data bundle
-3. **TrendAnalystAgent** performs analysis:
-   - Velocity trend (accelerating/decelerating)
-   - Build stability scoring
-   - Deployment cadence and rollback rates
-   - Anomaly detection (thresholds exceeded)
-   - Sprint 25 velocity forecast
-4. **TrendAnalystAgent → AdvisorAgent**: passes analysis + anomalies + forecast
-5. **AdvisorAgent** generates executive report:
-   - Queries Enterprise MCP for engineering leadership
-   - Produces prioritized recommendations with owners
-   - Creates improvement roadmap
+- `MetricsCollectorAgent` gathers sprint, repository, build, deployment, and historical trend data.
+- `TrendAnalystAgent` analyzes trends, detects anomalies, and forecasts the next sprint.
+- `AdvisorAgent` creates executive recommendations and assigns owners.
 
-## Authentication
+Sequential orchestration is best for analytics, reporting, and repeatable workflows where each stage feeds the next.
 
-| MCP Server / Service | Auth Method | Notes |
-|---------------------|-------------|-------|
-| Azure MCP Server | Entra ID / `DefaultAzureCredential` / RBAC | Auto-refreshed; no keys needed |
-| Enterprise MCP Server | Delegated OAuth2 via VS Code | Requires `Grant-EntraBetaMCPServerPermission` |
-| Azure DevOps | Azure Identity or PAT | PAT for setup scripts; identity for MCP |
+## Authentication And Trust Boundaries
 
-## Mock vs. Real Mode
+| Component | Authentication / boundary |
+|---|---|
+| VS Code and Copilot | User-authenticated session |
+| Azure MCP / Container Apps | Azure-hosted service boundary |
+| Azure resources | Entra ID and Azure RBAC |
+| Enterprise/Graph context | Delegated tenant permissions |
+| Azure DevOps | PAT, Azure DevOps auth, or configured connector identity |
+| Semantic Kernel agents | Application runtime plus Azure OpenAI configuration for real mode |
 
-- **Mock Mode** (`USE_MOCK_DATA=true`): All tool calls return synthetic data. No Azure resources required.
-- **Real Mode** (`USE_MOCK_DATA=false`): MCP servers connect to actual Azure services. For Scenario 3 real mode, also requires Azure OpenAI for Semantic Kernel agents.
+## Speaker Notes
+
+For a mixed audience, keep the explanation at two levels:
+
+- Business level: "The agent turns an incident signal into assigned engineering work."
+- Technical level: "The agent selects MCP tools, retrieves real cloud context, and Semantic Kernel coordinates specialist agents."
+

@@ -4,6 +4,34 @@
 
 This document is your step-by-step plan to run a **live** demo of Scenarios 1, 3, and 5 using your real Azure subscription and Azure DevOps environment, powered by the official [Azure MCP Server](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/) and [Microsoft MCP Server for Enterprise](https://learn.microsoft.com/en-us/graph/mcp-server/overview), plus the **Semantic Kernel Handoff Orchestration** pattern for multi-agent demos.
 
+## Current Real Azure Demo Assets
+
+Use these companion docs for the 1-hour mixed-audience session:
+
+| Doc | Purpose |
+|-----|---------|
+| [PRESENTATION_PREP.md](PRESENTATION_PREP.md) | 60-minute agenda, talk track, learning resources, and file list |
+| [REAL_AZURE_VSCODE_DEMO_RUNBOOK.md](REAL_AZURE_VSCODE_DEMO_RUNBOOK.md) | Live Azure + VS Code checklist, smoke tests, and fallback plan |
+| [SESSION_SCRIPT_AND_QA.md](SESSION_SCRIPT_AND_QA.md) | Presenter script and expected Q&A |
+| [architecture.md](architecture.md) | Architecture explanation using draw.io diagrams |
+| [architecture.drawio](architecture.drawio) | Editable draw.io architecture diagrams |
+
+### Deployed Azure Container Apps Endpoints
+
+| Service | URL |
+|---------|-----|
+| Agents MCP | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
+| Agents app | `https://agents.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
+| Azure MCP internal | `https://azure-mcp.internal.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
+
+Azure Portal context:
+
+- Tenant: `Contoso (MngEnv399036.onmicrosoft.com)`
+- Resource group: `rg-mcp-agent-stack`
+- Region: `East US`
+- Container Apps environment: `mcp-dev-env`
+- Container Apps: `agents`, `agents-mcp`, `azure-mcp`, `infra-mcp`, `research-mcp`
+
 ---
 
 ## Pre-Demo Checklist (Do These Before Friday)
