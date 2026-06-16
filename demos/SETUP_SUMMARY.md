@@ -29,5 +29,5 @@ You now have a complete, production-ready repository for Microsoft Enterprise MC
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/mquadri/microsoft-enterprise-mcp-servers.git
-cd microsoft-enterprise-mcp-servers
+git clone https://github.com/mquadri/mcp-ms-ent-demo.git
+cd mcp-ms-ent-demo

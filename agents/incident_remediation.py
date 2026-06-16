@@ -12,19 +12,20 @@ off context to the next agent in the chain.
 
 Requirements:
   pip install semantic-kernel[agents]
-  Environment: AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT, AZURE_OPENAI_API_KEY
-               or use DefaultAzureCredential for token-based auth.
+    Environment: AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT,
+                             AZURE_OPENAI_API_KEY or use
+                             DefaultAzureCredential for token-based auth.
 
 References:
-  - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/handoff
-  - https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns
+    - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/
+        agent/agent-orchestration/handoff
+    - https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/
+        ai-agent-design-patterns
 """
 
 import asyncio
 import argparse
-import json
 import os
-import sys
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -43,9 +44,15 @@ MOCK_ALERTS = [
         "ServiceName": "CheckoutService",
         "Severity": "Critical",
         "Message": "Database connection timeout - unable to process orders",
-        "AffectedResources": ["sql-checkout-db", "app-checkout-01", "app-checkout-02"],
+        "AffectedResources": [
+            "sql-checkout-db",
+            "app-checkout-01",
+            "app-checkout-02",
+        ],
         "ErrorCode": "CONN_TIMEOUT_5000",
-        "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=15)).isoformat(),
+        "Timestamp": (
+            datetime.now(timezone.utc) - timedelta(minutes=15)
+        ).isoformat(),
         "IncidentCount": 342,
     },
     {
@@ -55,7 +62,9 @@ MOCK_ALERTS = [
         "Message": "Payment processor API returning 503 errors",
         "AffectedResources": ["payment-gateway-01", "payment-gateway-02"],
         "ErrorCode": "EXT_API_ERROR_503",
-        "Timestamp": (datetime.now(timezone.utc) - timedelta(minutes=12)).isoformat(),
+        "Timestamp": (
+            datetime.now(timezone.utc) - timedelta(minutes=12)
+        ).isoformat(),
         "IncidentCount": 127,
     },
 ]
@@ -64,14 +73,18 @@ MOCK_LOGS = [
     {
         "level": "ERROR",
         "service": "CheckoutService",
-        "message": "Database query timeout after 5000ms — connection pool exhausted",
+        "message": (
+            "Database query timeout after 5000ms — connection pool exhausted"
+        ),
         "stack_trace": (
             "at CheckoutService.ProcessOrder (line 234)\n"
             "  at DbConnectionPool.Acquire (line 89)\n"
             "  at SqlClient.ExecuteQuery (line 156)"
         ),
         "request_id": "req-9921-8839",
-        "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=14)).isoformat(),
+        "timestamp": (
+            datetime.now(timezone.utc) - timedelta(minutes=14)
+        ).isoformat(),
     },
     {
         "level": "ERROR",
@@ -79,7 +92,9 @@ MOCK_LOGS = [
         "message": "External API unreachable: Stripe gateway returns 503",
         "error_code": "STRIPE_503",
         "request_id": "req-9921-8840",
-        "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=11)).isoformat(),
+        "timestamp": (
+            datetime.now(timezone.utc) - timedelta(minutes=11)
+        ).isoformat(),
     },
 ]
 
@@ -90,7 +105,7 @@ MOCK_ONCALL = {
     "team": "Platform Engineering",
 }
 
-ADO_ORG = "mquadri-msmenv"
+ADO_ORG = "contoso-org"
 ADO_PROJECT = "mcp-demo"
 
 MOCK_WORKITEM = {
@@ -99,13 +114,19 @@ MOCK_WORKITEM = {
     "url": f"https://dev.azure.com/{ADO_ORG}/{ADO_PROJECT}/_workitems/edit/1",
     "state": "To Do",
     "type": "Issue",
-    "assignedTo": "admin@MngEnv399036.onmicrosoft.com",
+    "assignedTo": "admin@contoso.onmicrosoft.com",
     "childTasks": [
-        {"id": 5, "title": "Increase DB connection pool max size from 50 to 200"},
+        {
+            "id": 5,
+            "title": "Increase DB connection pool max size from 50 to 200",
+        },
         {"id": 6, "title": "Add circuit breaker on DB retry path"},
         {"id": 4, "title": "Enable auto-scale on app-checkout-01/02"},
         {"id": 2, "title": "PaymentGateway: Investigate Stripe 503 errors"},
-        {"id": 3, "title": "Post-incident review: CheckoutService Sev1 outage"},
+        {
+            "id": 3,
+            "title": "Post-incident review: CheckoutService Sev1 outage",
+        },
     ],
 }
 
@@ -136,31 +157,46 @@ def triage_agent(incident_description: str) -> dict[str, Any]:
         "severity": "Sev1",
         "blast_radius": {
             "services": ["CheckoutService", "PaymentGateway"],
-            "resources": [r for a in MOCK_ALERTS for r in a["AffectedResources"]],
+            "resources": [
+                resource
+                for alert in MOCK_ALERTS
+                for resource in alert["AffectedResources"]
+            ],
             "customer_impact": "High — checkout flow is completely blocked",
         },
         "alerts": MOCK_ALERTS,
-        "recommendation": "Escalate to DiagnosticsAgent for root-cause analysis",
+        "recommendation": (
+            "Escalate to DiagnosticsAgent for root-cause analysis"
+        ),
     }
 
     print(f"\n🏷️  Classification: {classification['severity']}")
-    print(f"💥 Blast Radius: {len(classification['blast_radius']['resources'])} resources across "
-          f"{len(classification['blast_radius']['services'])} services")
-    print(f"👥 Customer Impact: {classification['blast_radius']['customer_impact']}")
+    print(
+        f"💥 Blast Radius: "
+        f"{len(classification['blast_radius']['resources'])} resources across "
+        f"{len(classification['blast_radius']['services'])} services"
+    )
+    print(
+        "👥 Customer Impact: "
+        f"{classification['blast_radius']['customer_impact']}"
+    )
     print("\n➡️  HANDOFF → DiagnosticsAgent\n")
     return classification
 
 
 def diagnostics_agent(triage_result: dict[str, Any]) -> dict[str, Any]:
     """
-    DiagnosticsAgent: deep root-cause analysis via Application Insights + Log Analytics.
-    In real mode this calls Azure MCP Server's applicationinsights_* and monitor_* tools.
+    DiagnosticsAgent: deep root-cause analysis via Application Insights +
+    Log Analytics. In real mode this calls Azure MCP Server's
+    applicationinsights_* and monitor_* tools.
     """
     print("=" * 70)
     print("🔬 DIAGNOSTICS AGENT — Root Cause Analysis")
     print("=" * 70)
-    print(f"Received triage: {triage_result['severity']} incident, "
-          f"{len(triage_result['blast_radius']['services'])} services affected\n")
+    print(
+        f"Received triage: {triage_result['severity']} incident, "
+        f"{len(triage_result['blast_radius']['services'])} services affected\n"
+    )
 
     print("📋 Querying Azure MCP Server → applicationinsights namespace...")
     for log in MOCK_LOGS:
@@ -170,15 +206,20 @@ def diagnostics_agent(triage_result: dict[str, Any]) -> dict[str, Any]:
     print("   Timeline:")
     print("   T-15m: CheckoutService → DB connection pool exhausted")
     print("   T-14m: Cascading timeout errors → 342 failed orders")
-    print("   T-12m: PaymentGateway → Stripe 503 (likely caused by retry storm)")
+    print(
+        "   T-12m: PaymentGateway → Stripe 503 "
+        "(likely caused by retry storm)"
+    )
     print("   T-08m: NotificationService queue overflow (downstream effect)")
 
     root_cause = {
         "root_cause": "Database connection pool exhaustion in CheckoutService",
         "contributing_factors": [
-            "Connection pool max size (50) insufficient for Black Friday traffic spike",
+            "Connection pool max size (50) insufficient for "
+            "Black Friday traffic spike",
             "Missing circuit breaker on the DB retry path caused retry storm",
-            "PaymentGateway 503 errors are a secondary effect of backend overload",
+            "PaymentGateway 503 errors are a secondary effect of "
+            "backend overload",
         ],
         "recommended_fix": (
             "1. Increase connection pool max size to 200\n"
@@ -251,7 +292,7 @@ def remediation_agent(diagnostics_result: dict[str, Any]) -> dict[str, Any]:
     print(f"Work Item:   Issue #{wi['id']} — {wi['title']}")
     print(f"Assigned To: {oc['displayName']} ({oc['mail']})")
     print(f"Status:      {wi['state']}")
-    print(f"ADO URL:     {wi['url']}")
+    print("ADO URL:     {}".format(wi["url"]))
     print("\nNext Steps:")
     for i, step in enumerate(summary["next_steps"], 1):
         print(f"   {i}. {step}")
@@ -273,10 +314,21 @@ def run_handoff_orchestration(incident: str) -> dict[str, Any]:
     """
     print()
     print("╔" + "═" * 68 + "╗")
-    print("║  SCENARIO 3: MULTI-AGENT INCIDENT REMEDIATION                     ║")
-    print("║  Pattern: Semantic Kernel Handoff Orchestration                    ║")
+    print(
+        "║  SCENARIO 3: MULTI-AGENT INCIDENT REMEDIATION"
+        "                     ║"
+    )
+    print(
+        "║  Pattern: Semantic Kernel Handoff Orchestration"
+        "                    ║"
+    )
     print("╚" + "═" * 68 + "╝")
-    print(f"\nMode: {'MOCK DATA' if USE_MOCK_DATA else 'LIVE — Azure MCP Server + Enterprise MCP'}")
+    mode = (
+        "MOCK DATA"
+        if USE_MOCK_DATA
+        else "LIVE — Azure MCP Server + Enterprise MCP"
+    )
+    print(f"\nMode: {mode}")
     print(f"Incident: {incident}\n")
 
     # Step 1 — Triage
@@ -292,9 +344,11 @@ def run_handoff_orchestration(incident: str) -> dict[str, Any]:
     print("✅ SCENARIO 3 — MULTI-AGENT INCIDENT REMEDIATION COMPLETE")
     print("=" * 70)
     print("Agents involved: TriageAgent → DiagnosticsAgent → RemediationAgent")
-    print(f"Total handoffs:  2")
-    print(f"Outcome:         Issue #{final_result['work_item']['id']} assigned to "
-          f"{final_result['assigned_to']['displayName']}")
+    print("Total handoffs:  2")
+    print(
+        f"Outcome: Issue #{final_result['work_item']['id']} assigned to "
+        f"{final_result['assigned_to']['displayName']}"
+    )
     print("=" * 70)
 
     return final_result
@@ -321,7 +375,10 @@ async def run_sk_handoff_orchestration(incident: str) -> dict[str, Any]:
         from semantic_kernel.agents.runtime import InProcessRuntime
         from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
     except ImportError:
-        print("⚠ semantic-kernel[agents] not installed. Run: pip install semantic-kernel[agents]")
+        print(
+            "⚠ semantic-kernel[agents] not installed. "
+            "Run: pip install semantic-kernel[agents]"
+        )
         print("  Falling back to mock orchestration.\n")
         return run_handoff_orchestration(incident)
 
@@ -347,7 +404,8 @@ async def run_sk_handoff_orchestration(incident: str) -> dict[str, Any]:
         kernel=kernel,
         name="TriageAgent",
         instructions=(
-            "You are a Triage Agent. Classify the incident severity (Sev1-Sev4), "
+            "You are a Triage Agent. Classify the incident severity "
+            "(Sev1-Sev4), "
             "identify the blast radius, and hand off to DiagnosticsAgent."
         ),
     )
@@ -356,8 +414,9 @@ async def run_sk_handoff_orchestration(incident: str) -> dict[str, Any]:
         kernel=kernel,
         name="DiagnosticsAgent",
         instructions=(
-            "You are a Diagnostics Agent. Perform root-cause analysis using log "
-            "correlation and dependency analysis. Hand off to RemediationAgent "
+            "You are a Diagnostics Agent. Perform root-cause analysis "
+            "using log correlation and dependency analysis. "
+            "Hand off to RemediationAgent "
             "with your findings."
         ),
     )
@@ -366,7 +425,8 @@ async def run_sk_handoff_orchestration(incident: str) -> dict[str, Any]:
         kernel=kernel,
         name="RemediationAgent",
         instructions=(
-            "You are a Remediation Agent. Create a work item for the incident, "
+            "You are a Remediation Agent. Create a work item for the "
+            "incident, "
             "identify the on-call engineer, assign the ticket, and produce a "
             "final incident response summary. You are the terminal agent."
         ),
@@ -425,7 +485,10 @@ def main():
     parser.add_argument(
         "--real",
         action="store_true",
-        help="Use Semantic Kernel with real Azure OpenAI (requires SK + env vars)",
+        help=(
+            "Use Semantic Kernel with real Azure OpenAI "
+            "(requires SK + env vars)"
+        ),
     )
     args = parser.parse_args()
 

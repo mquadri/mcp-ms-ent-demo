@@ -81,13 +81,13 @@ ERROR_LOGS = [
 
 ONCALL_ENGINEER = {
     "displayName": "System Administrator",
-    "mail": "admin@MngEnv399036.onmicrosoft.com",
+    "mail": "admin@contoso.onmicrosoft.com",
     "jobTitle": "Senior Platform Engineer",
     "team": "Platform Engineering",
 }
 
 # Real ADO work item references (mcp-demo project)
-ADO_ORG = "mquadri-msmenv"
+ADO_ORG = "contoso-org"
 ADO_PROJECT = "mcp-demo"
 ADO_WORKITEM = {
     "id": 1,
