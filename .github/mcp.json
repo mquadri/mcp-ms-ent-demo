@@ -1,9 +1,20 @@
 {
-  "inputs": [],
+  "inputs": [
+    {
+      "id": "agentsMcpUrl",
+      "type": "promptString",
+      "description": "Demo agents MCP endpoint URL, for example https://YOUR-AGENTS-MCP-FQDN/mcp"
+    },
+    {
+      "id": "azureDevOpsOrg",
+      "type": "promptString",
+      "description": "Azure DevOps organization name"
+    }
+  ],
   "servers": {
     "demo-agents-mcp": {
       "type": "http",
-      "url": "https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp"
+      "url": "${input:agentsMcpUrl}"
     },
     "microsoft-enterprise-mcp": {
       "type": "http",
@@ -12,7 +23,7 @@
     "azure-devops-mquadri": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@azure-devops/mcp", "mquadri-msmenv"]
+      "args": ["-y", "@azure-devops/mcp", "${input:azureDevOpsOrg}"]
     }
   }
 }

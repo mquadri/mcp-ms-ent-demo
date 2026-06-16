@@ -1,154 +1,365 @@
-<mxfile host="app.diagrams.net" modified="2026-06-15T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
-  <diagram id="real-azure-mcp-demo" name="Real Azure MCP Demo">
-    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-        <mxCell id="title1" value="Real Azure + VS Code MCP Agent Demo" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="40" y="20" width="620" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="vscode" value="VS Code&#xa;Copilot Chat Agent Mode&#xa;Presenter control plane" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="70" y="120" width="220" height="100" as="geometry"/>
-        </mxCell>
-        <mxCell id="learning" value="Learning Resources&#xa;ResonateHub AI Learn&#xa;Getting Started Lesson" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="70" y="280" width="220" height="100" as="geometry"/>
-        </mxCell>
-        <mxCell id="repo" value="This Repo&#xa;docs, prompts, agents&#xa;Demo scripts and configs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="70" y="440" width="220" height="100" as="geometry"/>
-        </mxCell>
-        <mxCell id="agentsapp" value="agents&#xa;https://agents...azurecontainerapps.io&#xa;Agent app endpoint" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="420" y="100" width="300" height="90" as="geometry"/>
-        </mxCell>
-        <mxCell id="agentsmcp" value="agents-mcp&#xa;https://agents-mcp...azurecontainerapps.io&#xa;MCP-facing endpoint" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="420" y="230" width="300" height="90" as="geometry"/>
-        </mxCell>
-        <mxCell id="azuremcp" value="azure-mcp&#xa;https://azure-mcp.internal...azurecontainerapps.io&#xa;Internal Azure MCP endpoint" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="420" y="360" width="300" height="90" as="geometry"/>
-        </mxCell>
-        <mxCell id="othermcp" value="infra-mcp / research-mcp&#xa;Additional MCP services&#xa;Container Apps environment: mcp-dev-env" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="420" y="490" width="300" height="90" as="geometry"/>
-        </mxCell>
-        <mxCell id="azure" value="Azure Services&#xa;Monitor / Log Analytics&#xa;Application Insights&#xa;Container Apps&#xa;Cosmos DB / platform data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#4d90fe;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="850" y="150" width="260" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="graph" value="Microsoft Graph / Entra ID&#xa;Users, groups, roles&#xa;Ownership and on-call context" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="850" y="340" width="260" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="ado" value="Azure DevOps&#xa;Boards work items&#xa;Bug, story, assignment, tags" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="850" y="510" width="260" height="100" as="geometry"/>
-        </mxCell>
-        <mxCell id="sk" value="Semantic Kernel&#xa;Handoff and Sequential Orchestration&#xa;Specialist agent workflows" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="1140" y="270" width="220" height="120" as="geometry"/>
-        </mxCell>
-        <mxCell id="e1" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="vscode" target="agentsapp">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e2" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="vscode" target="agentsmcp">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e3" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="agentsmcp" target="azuremcp">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e4" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="azuremcp" target="azure">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e5" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="agentsmcp" target="graph">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e6" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="agentsapp" target="ado">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e7" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" edge="1" parent="1" source="repo" target="sk">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e8" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" edge="1" parent="1" source="sk" target="agentsapp">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
-  <diagram id="scenario-3-handoff" name="Scenario 3 Handoff">
-    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-        <mxCell id="title2" value="Scenario 3: Multi-Agent Incident Remediation - Handoff" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="40" y="20" width="780" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="incident" value="Incident Prompt&#xa;CheckoutService failures&#xa;Payment impact" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="70" y="170" width="220" height="100" as="geometry"/>
-        </mxCell>
-        <mxCell id="triage" value="TriageAgent&#xa;Severity&#xa;Blast radius&#xa;Affected resources" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="380" y="160" width="220" height="120" as="geometry"/>
-        </mxCell>
-        <mxCell id="diag" value="DiagnosticsAgent&#xa;Logs and traces&#xa;Root cause&#xa;Contributing factors" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="690" y="160" width="220" height="120" as="geometry"/>
-        </mxCell>
-        <mxCell id="remed" value="RemediationAgent&#xa;Work item&#xa;Owner lookup&#xa;Next steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="1000" y="160" width="220" height="120" as="geometry"/>
-        </mxCell>
-        <mxCell id="azmon" value="Azure MCP&#xa;monitor / resourcehealth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="380" y="370" width="220" height="80" as="geometry"/>
-        </mxCell>
-        <mxCell id="appins" value="Azure MCP&#xa;applicationinsights / monitor / kusto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="690" y="370" width="220" height="80" as="geometry"/>
-        </mxCell>
-        <mxCell id="graphado" value="Enterprise MCP + Azure DevOps&#xa;Graph owner lookup&#xa;Bug assignment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="1000" y="370" width="220" height="90" as="geometry"/>
-        </mxCell>
-        <mxCell id="outcome" value="Outcome&#xa;Severity, root cause, work item, owner, remediation plan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="520" y="580" width="420" height="90" as="geometry"/>
-        </mxCell>
-        <mxCell id="h1" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="incident" target="triage"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="h2" value="handoff" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="triage" target="diag"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="h3" value="handoff" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="diag" target="remed"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="h4" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" edge="1" parent="1" source="triage" target="azmon"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="h5" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" edge="1" parent="1" source="diag" target="appins"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="h6" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" edge="1" parent="1" source="remed" target="graphado"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="h7" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="graphado" target="outcome"><mxGeometry relative="1" as="geometry"/></mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
-  <diagram id="scenario-5-sequential" name="Scenario 5 Sequential">
-    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-        <mxCell id="title3" value="Scenario 5: Development Velocity Analysis - Sequential Pipeline" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="40" y="20" width="860" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="task" value="Analysis Task&#xa;Velocity, build health, deployment cadence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="70" y="170" width="240" height="100" as="geometry"/>
-        </mxCell>
-        <mxCell id="collector" value="MetricsCollectorAgent&#xa;Collects raw data from 5 sources" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="390" y="160" width="230" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="analyst" value="TrendAnalystAgent&#xa;Trends, anomalies, forecast" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="710" y="160" width="230" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="advisor" value="AdvisorAgent&#xa;Recommendations, owners, roadmap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="1030" y="160" width="230" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="sources" value="Data Sources&#xa;Azure DevOps sprints and repos&#xa;Azure Monitor build/deploy logs&#xa;Cosmos DB trend documents" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="390" y="370" width="230" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="analysis" value="Analysis Output&#xa;Velocity trend&#xa;Build stability&#xa;Rollback rate&#xa;Sprint forecast" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="710" y="370" width="230" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="owners" value="Enterprise MCP / Graph&#xa;Engineering leads&#xa;Owner assignment context" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13" vertex="1" parent="1">
-          <mxGeometry x="1030" y="370" width="230" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="report" value="Executive Velocity Report&#xa;Summary, forecast, anomalies, prioritized recommendations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="520" y="610" width="470" height="90" as="geometry"/>
-        </mxCell>
-        <mxCell id="s1" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="task" target="collector"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="s2" value="fixed order" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="collector" target="analyst"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="s3" value="fixed order" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="analyst" target="advisor"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="s4" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" edge="1" parent="1" source="collector" target="sources"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="s5" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" edge="1" parent="1" source="analyst" target="analysis"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="s6" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" edge="1" parent="1" source="advisor" target="owners"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="s7" style="endArrow=block;html=1;rounded=0;strokeWidth=2" edge="1" parent="1" source="advisor" target="report"><mxGeometry relative="1" as="geometry"/></mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram id="real-azure-mcp-demo" name="Real Azure MCP Demo">
+        <mxGraphModel dx="1159" dy="527" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title1" value="Real Azure + VS Code MCP Agent Demo" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="620" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="vscode" value="VS Code&#xa;Copilot Chat Agent Mode&#xa;Presenter control plane" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="70" y="120" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="learning" value="Learning Resources&#xa;ResonateHub AI Learn&#xa;Getting Started Lesson" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="70" y="280" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="repo" value="This Repo&#xa;docs, prompts, agents&#xa;Demo scripts and configs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="70" y="440" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="agentsapp" value="agents&#xa;https://agents...azurecontainerapps.io&#xa;Agent app endpoint" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="420" y="100" width="300" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="agentsmcp" value="agents-mcp&#xa;https://agents-mcp...azurecontainerapps.io&#xa;MCP-facing endpoint" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="420" y="230" width="300" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="azuremcp" value="azure-mcp&#xa;https://azure-mcp.internal...azurecontainerapps.io&#xa;Internal Azure MCP endpoint" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="420" y="360" width="300" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="othermcp" value="infra-mcp / research-mcp&#xa;Additional MCP services&#xa;Container Apps environment: &lt;container-apps-environment&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="420" y="490" width="300" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="azure" value="Azure Services&#xa;Monitor / Log Analytics&#xa;Application Insights&#xa;Container Apps&#xa;Cosmos DB / platform data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#4d90fe;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="850" y="150" width="260" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="graph" value="Microsoft Graph / Entra ID&#xa;Users, groups, roles&#xa;Ownership and on-call context" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="850" y="340" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="ado" value="Azure DevOps&#xa;Boards work items&#xa;Bug, story, assignment, tags" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="850" y="510" width="260" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="sk" value="Semantic Kernel&#xa;Handoff and Sequential Orchestration&#xa;Specialist agent workflows" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="1140" y="270" width="220" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="vscode" target="agentsapp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="vscode" target="agentsmcp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="agentsmcp" target="azuremcp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="azuremcp" target="azure" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="agentsmcp" target="graph" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="agentsapp" target="ado" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="repo" target="sk" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="sk" target="agentsapp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="scenario-3-handoff" name="Scenario 3 Handoff">
+        <mxGraphModel dx="1159" dy="527" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title2" value="Scenario 3: Multi-Agent Incident Remediation - Handoff" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="780" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="incident" value="Incident Prompt&#xa;CheckoutService failures&#xa;Payment impact" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="70" y="170" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="triage" value="TriageAgent&#xa;Severity&#xa;Blast radius&#xa;Affected resources" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="380" y="160" width="220" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="diag" value="DiagnosticsAgent&#xa;Logs and traces&#xa;Root cause&#xa;Contributing factors" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="690" y="160" width="220" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="remed" value="RemediationAgent&#xa;Work item&#xa;Owner lookup&#xa;Next steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="1000" y="160" width="220" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="azmon" value="Azure MCP&#xa;monitor / resourcehealth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="380" y="370" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="appins" value="Azure MCP&#xa;applicationinsights / monitor / kusto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="690" y="370" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="graphado" value="Enterprise MCP + Azure DevOps&#xa;Graph owner lookup&#xa;Bug assignment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="1000" y="370" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="outcome" value="Outcome&#xa;Severity, root cause, work item, owner, remediation plan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="520" y="580" width="420" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="h1" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="incident" target="triage" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="h2" value="handoff" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="triage" target="diag" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="h3" value="handoff" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="diag" target="remed" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="h4" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="triage" target="azmon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="h5" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="diag" target="appins" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="h6" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="remed" target="graphado" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="h7" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="graphado" target="outcome" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="scenario-5-sequential" name="Scenario 5 Sequential">
+        <mxGraphModel dx="1159" dy="527" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title3" value="Scenario 5: Development Velocity Analysis - Sequential Pipeline" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="860" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="task" value="Analysis Task&#xa;Velocity, build health, deployment cadence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="70" y="170" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="collector" value="MetricsCollectorAgent&#xa;Collects raw data from 5 sources" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="390" y="160" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="analyst" value="TrendAnalystAgent&#xa;Trends, anomalies, forecast" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="710" y="160" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="advisor" value="AdvisorAgent&#xa;Recommendations, owners, roadmap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="1030" y="160" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="sources" value="Data Sources&#xa;Azure DevOps sprints and repos&#xa;Azure Monitor build/deploy logs&#xa;Cosmos DB trend documents" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="390" y="370" width="230" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="analysis" value="Analysis Output&#xa;Velocity trend&#xa;Build stability&#xa;Rollback rate&#xa;Sprint forecast" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="710" y="370" width="230" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="owners" value="Enterprise MCP / Graph&#xa;Engineering leads&#xa;Owner assignment context" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="1030" y="370" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="report" value="Executive Velocity Report&#xa;Summary, forecast, anomalies, prioritized recommendations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="520" y="610" width="470" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="task" target="collector" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s2" value="fixed order" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="collector" target="analyst" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s3" value="fixed order" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="analyst" target="advisor" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s4" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="collector" target="sources" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s5" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="analyst" target="analysis" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s6" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="advisor" target="owners" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s7" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="advisor" target="report" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="communication-flow-vscode-llm-mcp" name="Communication Flow">
+        <mxGraphModel dx="939" dy="527" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="920" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="cf-title" value="Communication Flow: VS Code Agent Mode, LLM, MCP Server, And Agent Backend" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="980" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-user" value="Presenter&#xa;Natural-language prompt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="60" y="130" width="210" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-vscode" value="VS Code&#xa;Copilot Chat Agent Mode&#xa;Tool picker + MCP client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="340" y="120" width="240" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-llm" value="LLM / Copilot Agent Reasoning&#xa;Plan task&#xa;Select tool&#xa;Summarize result" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="660" y="120" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-config" value="MCP Configuration&#xa;.vscode/mcp.json local&#xa;.github/mcp.json repo&#xa;demo-agents-mcp -&gt; /mcp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="340" y="300" width="240" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-mcp" value="agents-mcp Container App&#xa;MCP transport endpoint&#xa;/mcp&#xa;Tools: health, ask_agent, ask_agent_stream" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="660" y="300" width="280" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-agentapp" value="agents Container App&#xa;Agent API&#xa;/health, /chat, /chat/stream&#xa;Supervisor execution path" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="1030" y="300" width="280" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-aoai" value="Azure OpenAI / LLM Runtime&#xa;Model inference&#xa;Agent response generation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#4d90fe;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="1030" y="500" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-backends" value="Internal MCP Backends&#xa;azure-mcp internal&#xa;infra-mcp&#xa;research-mcp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="660" y="520" width="280" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-systems" value="Enterprise Systems&#xa;Azure Monitor / Logs&#xa;Microsoft Graph / Entra&#xa;Azure DevOps Boards" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="340" y="540" width="240" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-result" value="Final Response In VS Code&#xa;Triage summary&#xa;Bug-ready output&#xa;Recommended owner and next steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="60" y="540" width="230" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e1" value="1 prompt" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-user" target="cf-vscode" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e2" value="2 reason" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-vscode" target="cf-llm" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e3" value="3 discover tools" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="cf-vscode" target="cf-config" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e4" value="4 call MCP tool" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-llm" target="cf-mcp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e5" value="5 forward ask_agent" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-mcp" target="cf-agentapp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e6" value="6 model call" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-agentapp" target="cf-aoai" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e7" value="7 backend tools" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-agentapp" target="cf-backends" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e8" value="8 data/action" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-backends" target="cf-systems" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e9" value="9 response" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-systems" target="cf-result" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cf-e10" value="10 summarize" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="cf-result" target="cf-user" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="scenario-1-single-agent" name="Scenario 1 Single Agent">
+        <mxGraphModel dx="1159" dy="527" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="920" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="s1-title" value="Scenario 1: Single-Agent Incident Response With Multiple MCP Tools" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="880" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-prompt" value="User Prompt&#xa;Production incident&#xa;CheckoutService failures" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="60" y="160" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-agent" value="Copilot Agent In VS Code&#xa;Single agent orchestration&#xa;Plans and calls tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="360" y="150" width="250" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-monitor" value="Azure MCP&#xa;Monitor namespace&#xa;Active critical alerts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="720" y="80" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-logs" value="Azure MCP&#xa;Log Analytics / App Insights&#xa;Error correlation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="720" y="220" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-graph" value="Enterprise MCP&#xa;Microsoft Graph / Entra&#xa;On-call lookup" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="720" y="360" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-ado" value="Azure DevOps MCP/API&#xa;Create Sev1 bug&#xa;Assign owner" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="720" y="500" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-out" value="Demo Outcome&#xa;Incident timeline&#xa;Root cause&#xa;Bug-ready work item&#xa;Assigned on-call engineer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="1060" y="260" width="270" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-e1" value="1 incident request" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="s1-prompt" target="s1-agent" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-e2" value="2 alerts" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="s1-agent" target="s1-monitor" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-e3" value="3 logs" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="s1-agent" target="s1-logs" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-e4" value="4 owner" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="s1-agent" target="s1-graph" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-e5" value="5 ticket" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="s1-agent" target="s1-ado" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1-e6" value="6 summary" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="s1-ado" target="s1-out" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="demo-use-case-map" name="Demo Use Case Map">
+        <mxGraphModel dx="1032" dy="527" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="920" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="map-title" value="Demo Use Cases: Agent Patterns You Will Show" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="720" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-vscode" value="VS Code Agent Mode&#xa;Live control plane&#xa;Configure Tools shows demo-agents-mcp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="70" y="160" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-health" value="Use Case 0&#xa;Connectivity Proof&#xa;agent_health" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="430" y="80" width="250" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-incident" value="Use Case 1&#xa;Single-Agent Incident Response&#xa;Alerts -&gt; logs -&gt; ticket -&gt; owner" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="430" y="220" width="250" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-handoff" value="Use Case 3&#xa;Handoff Orchestration&#xa;Triage -&gt; Diagnostics -&gt; Remediation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="430" y="390" width="250" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-seq" value="Use Case 5&#xa;Sequential Orchestration&#xa;Collect -&gt; Analyze -&gt; Advise" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="430" y="560" width="250" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-live" value="Live MCP Tools&#xa;ask_agent&#xa;ask_agent_stream&#xa;Agent API /chat and /chat/stream" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="800" y="190" width="260" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-local" value="Local Mock Fallback&#xa;incident_remediation.py&#xa;velocity_analysis.py&#xa;USE_MOCK_DATA=true" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13" parent="1" vertex="1">
+                    <mxGeometry x="800" y="440" width="260" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-out" value="Audience Takeaway&#xa;MCP connects tools&#xa;LLM reasons and selects tools&#xa;Agent patterns structure work" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="1160" y="310" width="250" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e1" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="map-vscode" target="map-health" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e2" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="map-vscode" target="map-incident" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e3" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="map-vscode" target="map-handoff" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e4" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="map-vscode" target="map-seq" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e5" value="live path" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="map-incident" target="map-live" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e6" value="fallback path" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="map-handoff" target="map-local" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e7" value="fallback path" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1" parent="1" source="map-seq" target="map-local" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e8" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="map-live" target="map-out" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="map-e9" style="endArrow=block;html=1;rounded=0;strokeWidth=2" parent="1" source="map-local" target="map-out" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>

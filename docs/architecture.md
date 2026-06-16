@@ -4,12 +4,26 @@ This document describes the real Azure + VS Code demo architecture for this repo
 
 ## Editable Diagrams
 
-- [architecture.drawio](architecture.drawio) - editable draw.io source with three pages:
+- [architecture.drawio](architecture.drawio) - editable draw.io source with six pages:
   - `Real Azure MCP Demo`
+  - `Communication Flow`
+  - `Scenario 1 Single Agent`
   - `Scenario 3 Handoff`
   - `Scenario 5 Sequential`
+  - `Demo Use Case Map`
 
 To edit the diagrams, open `docs/architecture.drawio` in diagrams.net or the VS Code draw.io extension.
+
+## Diagram Page Guide
+
+| Page | Use it when you explain |
+|---|---|
+| `Real Azure MCP Demo` | The deployed Azure Container Apps architecture and service boundaries |
+| `Communication Flow` | How VS Code Agent mode, the LLM, MCP server, agent backend, and enterprise systems communicate |
+| `Scenario 1 Single Agent` | The single-agent incident response flow: alerts, logs, ticket, owner assignment |
+| `Scenario 3 Handoff` | The multi-agent handoff pattern: TriageAgent to DiagnosticsAgent to RemediationAgent |
+| `Scenario 5 Sequential` | The analytics pipeline pattern: MetricsCollectorAgent to TrendAnalystAgent to AdvisorAgent |
+| `Demo Use Case Map` | The whole session flow, including live MCP tools and local mock fallback |
 
 ## Deployed Azure Container Apps
 
@@ -17,11 +31,11 @@ The real demo uses Azure Container Apps deployed in East US:
 
 | Service | URL | Purpose |
 |---|---|---|
-| Agent MCP endpoint | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp` | MCP-facing endpoint for agent/tool integration |
-| Agent app endpoint | `https://agents.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` | Agent application endpoint |
-| Azure MCP endpoint | `https://azure-mcp.internal.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` | Internal Azure MCP endpoint inside the Container Apps environment |
+| Agent MCP endpoint | `https://<agents-mcp-fqdn>/mcp` | MCP-facing endpoint for agent/tool integration |
+| Agent app endpoint | `https://<agents-app-fqdn>` | Agent application endpoint |
+| Azure MCP endpoint | `https://<azure-mcp-internal-fqdn>` | Internal Azure MCP endpoint inside the Container Apps environment |
 
-The Azure Portal screenshot shows the relevant Container Apps in resource group `rg-mcp-agent-stack`, Container Apps environment `mcp-dev-env`, region `East US`:
+The Azure Portal screenshot shows the relevant Container Apps in your demo resource group, Container Apps environment, and region:
 
 - `agents`
 - `agents-mcp`

@@ -6,9 +6,9 @@ This runbook is for the live Azure + VS Code version of the demo. It assumes the
 
 | Name | URL |
 |---|---|
-| Agents MCP | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp` |
-| Agents app | `https://agents.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
-| Azure MCP internal | `https://azure-mcp.internal.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
+| Agents MCP | `https://<agents-mcp-fqdn>/mcp` |
+| Agents app | `https://<agents-app-fqdn>` |
+| Azure MCP internal | `https://<azure-mcp-internal-fqdn>` |
 
 ## VS Code MCP Configuration For The Demo
 
@@ -36,7 +36,7 @@ The repo contains this config in `.github/mcp.json`:
   "servers": {
     "demo-agents-mcp": {
       "type": "http",
-      "url": "https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp"
+      "url": "${input:agentsMcpUrl}"
     },
     "microsoft-enterprise-mcp": {
       "type": "http",
@@ -45,7 +45,7 @@ The repo contains this config in `.github/mcp.json`:
     "azure-devops-mquadri": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@azure-devops/mcp", "mquadri-msmenv"]
+      "args": ["-y", "@azure-devops/mcp", "${input:azureDevOpsOrg}"]
     }
   }
 }
@@ -239,10 +239,10 @@ Running containers prove the services exist. The connected MCP server proves VS 
 
 | Item | Value |
 |---|---|
-| Tenant display | `Contoso (MngEnv399036.onmicrosoft.com)` |
-| Resource group | `rg-mcp-agent-stack` |
+| Tenant display | `<demo-tenant-display-name>` |
+| Resource group | `<demo-resource-group>` |
 | Region | `East US` |
-| Container Apps environment | `mcp-dev-env` |
+| Container Apps environment | `<container-apps-environment>` |
 | Environment type | `Consumption only` |
 | Container Apps | `agents`, `agents-mcp`, `azure-mcp`, `infra-mcp`, `research-mcp` |
 
@@ -254,7 +254,7 @@ Complete this before the session starts:
 - Open Copilot Chat in Agent mode.
 - Confirm MCP endpoints are configured and reachable from the demo environment.
 - Confirm Azure sign-in is the correct tenant and subscription.
-- Confirm the Container Apps are running in `rg-mcp-agent-stack`.
+- Confirm the Container Apps are running in `<demo-resource-group>`.
 - Confirm the deployed agent endpoint opens or returns a health response.
 - Confirm the MCP endpoint is available to the client that will use it.
 - Confirm Azure DevOps organization and project are reachable.
@@ -275,7 +275,7 @@ Expected result: the active subscription and tenant match the demo environment.
 ### Container Apps inventory
 
 ```powershell
-az containerapp list --resource-group rg-mcp-agent-stack --query "[].{name:name, state:properties.runningStatus, fqdn:properties.configuration.ingress.fqdn}" -o table
+az containerapp list --resource-group <demo-resource-group> --query "[].{name:name, state:properties.runningStatus, fqdn:properties.configuration.ingress.fqdn}" -o table
 ```
 
 Expected result: the app list includes `agents`, `agents-mcp`, `azure-mcp`, `infra-mcp`, and `research-mcp`.
@@ -283,7 +283,7 @@ Expected result: the app list includes `agents`, `agents-mcp`, `azure-mcp`, `inf
 ### Agent endpoint
 
 ```powershell
-Invoke-WebRequest -Uri "https://agents.agreeablepond-fb125b6b.eastus.azurecontainerapps.io" -Method Head
+Invoke-WebRequest -Uri "https://<agents-app-fqdn>" -Method Head
 ```
 
 Expected result: HTTP response proves the deployed app endpoint is reachable.
@@ -291,7 +291,7 @@ Expected result: HTTP response proves the deployed app endpoint is reachable.
 ### MCP endpoint
 
 ```powershell
-Invoke-WebRequest -Uri "https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp" -Method Head
+Invoke-WebRequest -Uri "https://<agents-mcp-fqdn>/mcp" -Method Head
 ```
 
 Expected result: an HTTP response proves the MCP-facing endpoint is reachable. A normal browser-style request can return `406` on `/mcp`; that still proves the route exists. VS Code performs the actual MCP handshake with the correct headers.
@@ -302,7 +302,7 @@ Symptom:
 
 ```text
 Connection state: Error 404 status connecting ... as SSE: Not Found
-Endpoint involved: https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/
+Endpoint involved: https://<agents-mcp-fqdn>/
 ```
 
 Likely cause:
@@ -314,9 +314,9 @@ Correct VS Code configuration:
 ```json
 {
   "servers": {
-    "demo-agents-mcp": {
+      "demo-agents-mcp": {
       "type": "http",
-      "url": "https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp"
+      "url": "https://<agents-mcp-fqdn>/mcp"
     }
   }
 }
@@ -337,7 +337,7 @@ If VS Code logs still show the base `/` endpoint after the config uses `/mcp`, d
 Validation commands:
 
 ```powershell
-$base = "https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io"
+$base = "https://<agents-mcp-fqdn>"
 Invoke-WebRequest -Uri "$base/" -Method Get -SkipHttpErrorCheck
 Invoke-WebRequest -Uri "$base/mcp" -Method Get -SkipHttpErrorCheck
 ```
@@ -352,6 +352,139 @@ Expected validation pattern:
 Runbook note:
 
 Health checks and MCP handshakes are different. A healthy service can still fail MCP negotiation if the client is configured to the wrong path or transport.
+
+## Troubleshooting: `ask_agent` Upstream Timeout
+
+Symptom in VS Code Agent mode:
+
+```text
+Upstream request timed out, please retry.
+```
+
+Observed pattern:
+
+- `demo-agents-mcp` is connected.
+- `demo-agents-mcp-agent_health` succeeds.
+- `demo-agents-mcp-ask_agent` fails.
+- `demo-agents-mcp-ask_agent_stream` fails.
+- The deployed agent app health endpoint returns `status: ok`.
+
+Likely cause:
+
+The MCP layer is healthy, but the agent execution path behind `ask_agent` is timing out. This usually means the request reached the MCP server and was forwarded to the supervisor/agent app, but the supervisor is waiting too long on a downstream dependency such as model inference, internal MCP backends, checkpointer/database access, or tool execution.
+
+Important distinction:
+
+```text
+MCP connected + health OK does not prove the supervisor can complete a chat request.
+```
+
+### Confirm The Failure Outside VS Code
+
+Run this direct test against the deployed agent app:
+
+```powershell
+$body = @{ query = "health check: reply with one short sentence" } | ConvertTo-Json
+Invoke-RestMethod `
+  -Uri "https://<agents-app-fqdn>/chat" `
+  -Method Post `
+  -ContentType "application/json" `
+  -Body $body `
+  -TimeoutSec 90
+```
+
+Expected result when healthy:
+
+```json
+{
+  "response": "...",
+  "thread_id": "...",
+  "duration_ms": 1234
+}
+```
+
+If this direct call times out, the issue is in the deployed agent app or its downstream dependencies, not in VS Code.
+
+### Check Azure Container Apps Logs
+
+First refresh Azure CLI login if needed:
+
+```powershell
+az logout
+az login --tenant "<demo-tenant-id>" --scope "https://management.core.windows.net//.default"
+```
+
+Then inspect the agent app logs:
+
+```powershell
+az containerapp logs show `
+  --name agents `
+  --resource-group <demo-resource-group> `
+  --tail 100
+```
+
+Inspect the MCP-facing app logs:
+
+```powershell
+az containerapp logs show `
+  --name agents-mcp `
+  --resource-group <demo-resource-group> `
+  --tail 100
+```
+
+Look for:
+
+- Azure OpenAI timeout or authentication errors.
+- Internal MCP backend timeout.
+- SQLite/checkpointer lock or write errors.
+- Tool execution hanging.
+- Container cold start delays.
+- Unhandled exceptions after `/chat` starts.
+
+### Validate The Agent API Routes
+
+The deployed agent app exposes these routes:
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/health` | Basic service health |
+| `POST` | `/chat` | Non-streaming supervisor request |
+| `POST` | `/chat/stream` | Streaming supervisor request |
+| `GET` | `/threads/{thread_id}` | Thread state lookup |
+| `POST` | `/compare` | Framework comparison route |
+
+Health can pass while `/chat` still times out. Treat `/chat` as the real end-to-end readiness check for the demo.
+
+### Fast Recovery For A Live Demo
+
+If `ask_agent` times out during the session:
+
+1. Show `demo-agents-mcp-agent_health` to prove MCP connectivity.
+2. Explain that the failure is downstream of MCP in the supervisor execution path.
+3. Run the local mock fallback:
+
+```powershell
+$env:USE_MOCK_DATA = "true"
+$env:PYTHONIOENCODING = "utf-8"
+C:\tmp\mcp-demo-env\Scripts\python.exe agents\incident_remediation.py
+```
+
+4. Continue the architecture explanation with `docs/architecture.drawio`.
+
+Talk track:
+
+```text
+This is a useful real-world distinction: MCP connection health and agent execution readiness are different checks. The tool layer is reachable, but the supervisor request path is waiting on a downstream dependency. For the demo, I can continue with the local mock workflow because it demonstrates the same orchestration pattern.
+```
+
+### Acceptance Criteria For Fix
+
+- `demo-agents-mcp-agent_health` succeeds.
+- Direct `POST /chat` completes within the agreed timeout.
+- `demo-agents-mcp-ask_agent` completes from VS Code Agent mode.
+- `demo-agents-mcp-ask_agent_stream` streams without timing out.
+- Container Apps logs show no repeated downstream timeout or authentication errors.
+- Runbook includes `/chat` as an end-to-end readiness check, not only `/health`.
 
 ### Python demo fallback
 

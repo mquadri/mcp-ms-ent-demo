@@ -20,16 +20,16 @@ Use these companion docs for the 1-hour mixed-audience session:
 
 | Service | URL |
 |---------|-----|
-| Agents MCP | `https://agents-mcp.agreeablepond-fb125b6b.eastus.azurecontainerapps.io/mcp` |
-| Agents app | `https://agents.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
-| Azure MCP internal | `https://azure-mcp.internal.agreeablepond-fb125b6b.eastus.azurecontainerapps.io` |
+| Agents MCP | `https://<agents-mcp-fqdn>/mcp` |
+| Agents app | `https://<agents-app-fqdn>` |
+| Azure MCP internal | `https://<azure-mcp-internal-fqdn>` |
 
 Azure Portal context:
 
-- Tenant: `Contoso (MngEnv399036.onmicrosoft.com)`
-- Resource group: `rg-mcp-agent-stack`
+- Tenant: `<demo-tenant-display-name>`
+- Resource group: `<demo-resource-group>`
 - Region: `East US`
-- Container Apps environment: `mcp-dev-env`
+- Container Apps environment: `<container-apps-environment>`
 - Container Apps: `agents`, `agents-mcp`, `azure-mcp`, `infra-mcp`, `research-mcp`
 
 ---
