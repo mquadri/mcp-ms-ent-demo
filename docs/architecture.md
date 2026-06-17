@@ -52,6 +52,7 @@ The Azure Portal screenshot shows the relevant Container Apps in your demo resou
 5. Enterprise/Graph tooling resolves users, teams, roles, and ownership.
 6. The agent workflow creates or updates Azure DevOps work items.
 7. Semantic Kernel orchestrates multi-agent handoff and sequential workflows.
+8. Phase 2 persists investigations, topology, approval decisions, and prevention recommendations for recurring operations.
 
 ## Conceptual Layers
 
@@ -62,6 +63,7 @@ The Azure Portal screenshot shows the relevant Container Apps in your demo resou
 | MCP tool layer | MCP standardizes access to enterprise systems | Azure MCP / agent MCP endpoints |
 | Enterprise systems | Azure and Microsoft Graph provide real context | Alerts, logs, users, assignments |
 | Orchestration | Semantic Kernel coordinates specialist agents | `incident_remediation.py`, `velocity_analysis.py` |
+| Durable operations | Investigations and recommendations survive each run | `agents/phase2_devops_agent.py`, SQLite store |
 
 ## Scenario 1: Single-Agent Incident Response
 
@@ -106,6 +108,25 @@ Use this scenario to explain pipelines:
 - `AdvisorAgent` creates executive recommendations and assigns owners.
 
 Sequential orchestration is best for analytics, reporting, and repeatable workflows where each stage feeds the next.
+
+## Phase 2: Always-On Agent Foundation
+
+The phase 2 foundation introduces the operational pieces needed to move closer to a managed DevOps agent:
+
+1. Alert ingestion through a `DevOpsToolClient` interface.
+2. SQLite persistence for investigations, events, topology, and prevention recommendations.
+3. Application topology generation from affected services and resources.
+4. Human approval gates before production-impacting remediation.
+5. Prevention analysis over historical investigations.
+6. A `RealMcpClient` seam where deployed MCP calls can replace mock data.
+
+Run it locally:
+
+```bash
+python agents/phase2_devops_agent.py alert-cycle
+python agents/phase2_devops_agent.py prevention-cycle
+python agents/phase2_devops_agent.py store-summary
+```
 
 ## Authentication And Trust Boundaries
 

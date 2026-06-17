@@ -121,6 +121,7 @@ See [configuration/README.md](configuration/README.md) for full details.
 | **1** | Automated Incident Response | Single-agent, multi-tool | Azure MCP Server (monitor), Enterprise MCP (Graph) |
 | **3** | Multi-Agent Incident Remediation | **Handoff Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
 | **5** | Development Velocity Analysis | **Sequential Orchestration** (Semantic Kernel) | Azure MCP Server + Enterprise MCP + SK Agent Framework |
+| **Phase 2** | Always-on DevOps Agent Foundation | Triggered cycle + persistence + prevention | MCP adapter seam + SQLite + topology + approval gates |
 
 ### Quick Start (3 Steps)
 
@@ -143,6 +144,11 @@ python demos/setup_scenario_5.py
 # Run multi-agent orchestrations
 python agents/incident_remediation.py   # Scenario 3 — Handoff
 python agents/velocity_analysis.py      # Scenario 5 — Sequential
+
+# Run the phase 2 agent foundation
+python agents/phase2_devops_agent.py alert-cycle
+python agents/phase2_devops_agent.py watch --cycles 1
+python agents/phase2_devops_agent.py prevention-cycle
 ```
 
 See the full setup guide and prompt catalog in [demos/README.md](demos/README.md).
@@ -170,6 +176,26 @@ MetricsCollectorAgent → TrendAnalystAgent → AdvisorAgent
 The MetricsCollectorAgent gathers data from Azure DevOps, Azure Monitor, and Cosmos DB. The TrendAnalystAgent performs statistical analysis and anomaly detection. The AdvisorAgent generates an executive summary with prioritized recommendations and assigns owners via Enterprise MCP (Microsoft Graph).
 
 See [agents/README.md](agents/README.md) for the comparison of Handoff vs. Sequential patterns.
+
+### Phase 2: DevOps Agent Foundation
+
+Phase 2 starts turning the demo into an always-on agent architecture. It adds a durable investigation store, alert-cycle runner, application topology map, remediation approval gate, prevention recommendation cycle, and a `RealMcpClient` adapter seam for replacing mock calls with deployed MCP calls.
+
+```bash
+# Mock alert-triggered investigation cycle
+python agents/phase2_devops_agent.py alert-cycle
+
+# Review persisted state
+python agents/phase2_devops_agent.py store-summary
+
+# Run as a bounded polling worker
+python agents/phase2_devops_agent.py watch --cycles 3 --interval-seconds 60
+
+# Re-run prevention analysis across persisted investigations
+python agents/phase2_devops_agent.py prevention-cycle
+```
+
+See [docs/PHASE2_DEVOPS_AGENT.md](docs/PHASE2_DEVOPS_AGENT.md) for the implementation notes and next integration points.
 
 ### Running a Real Demo
 
